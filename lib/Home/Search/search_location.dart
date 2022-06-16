@@ -224,8 +224,10 @@
 
 
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/Home/screen_home.dart';
+import 'package:music_app/Model/model.dart';
 import 'package:music_app/Play%20Music/list%20Audios/audiolist.dart';
 import 'package:music_app/Play%20Music/play_music.dart';
 import 'package:music_app/Splash%20Screen/splash_screen.dart';
@@ -289,22 +291,30 @@ class SearchLocation extends SearchDelegate {
 // search element
   @override
   Widget buildSuggestions(BuildContext context) {
+    List<Audio> convertAudios = [];
+
+     List<Songs> dbSongs = box.values.toList();
+
+    for (var item in dbSongs) {
+      convertAudios.add(
+        Audio.file(item.songurl!,
+            metas: Metas(
+                title: item.songname,
+                artist: item.artist,
+                id: item.id.toString())),
+      );
+    }
+
     final searchSongItems = query.isEmpty
-        ? fullSongs
-        : fullSongs
+        ? convertAudios
+        : convertAudios
             .where(
               (element) => element.metas.title!.toLowerCase().contains(
                     query.toLowerCase().toString(),
                   ),
             )
             .toList();
-    // fullSongs
-    //     .where(
-    //       (element) => element.metas.artist!.toLowerCase().contains(
-    //             query.toLowerCase().toString(),
-    //           ),
-    //     )
-    //     .toList();
+   
 
     return Container(
       decoration: const BoxDecoration(
@@ -340,12 +350,12 @@ class SearchLocation extends SearchDelegate {
                         child: Center(
                           child: ListTile(
                             onTap: (() async {
+                              final songid =
+                                  convertAudios[index].metas.id.toString();
                               await OpenPlayer(
-                                fullSongs: [],
-                                songId: fullSongs[index]
-                                    .metas
-                                    .id
-                                    .toString(),
+                                fullSongs: convertAudios,
+                                songId: songid,
+                                    
                                 index: index,
                               ).openAssetPlayer(
                                 index: index,
@@ -383,14 +393,7 @@ class SearchLocation extends SearchDelegate {
                                 searchSongItems[index].metas.artist!,
                               ),
                             ),
-                            trailing: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.more_vert,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
+                            
                           ),
                         )),
                   );

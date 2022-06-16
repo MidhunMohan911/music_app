@@ -3,11 +3,12 @@ import 'package:favorite_button/favorite_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:hive/hive.dart';
 import 'package:marquee/marquee.dart';
+import 'package:music_app/Favourites/favorite_icon.dart';
 import 'package:music_app/Splash%20Screen/splash_screen.dart';
 import 'package:music_app/bottomnav.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-
 import 'package:music_app/Model/model.dart';
 
 // ignore: must_be_immutable
@@ -32,9 +33,24 @@ AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
 
 class _PlayMusicState extends State<PlayMusic> {
   final AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
+
+  late Box<Songs> box;
+  late List<Songs> allsongs;
+
+  @override
+  void initState() {
+    box = Hive.box<Songs>(boxname);
+
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // dbSongs = box.get('musics') as List<Songs>;
+
+    allsongs = box.values.toList();
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -64,7 +80,7 @@ class _PlayMusicState extends State<PlayMusic> {
           // dbSongs.firstWhere((element) =>
           //     element.id.toString() == myAudio.metas.id.toString());
 
-       int songId =int.parse(playing!.audio.audio.metas.id!);
+          int songId = int.parse(playing!.audio.audio.metas.id!);
 
           return Center(
             child: Column(
@@ -108,7 +124,7 @@ class _PlayMusicState extends State<PlayMusic> {
                           blankSpace: 20,
                           velocity: 20,
                           text: player.getCurrentAudioTitle,
-                          style: TextStyle(fontSize: 18,color: Colors.white),
+                          style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                       SizedBox(
@@ -118,7 +134,7 @@ class _PlayMusicState extends State<PlayMusic> {
                           blankSpace: 20,
                           velocity: 20,
                           text: player.getCurrentAudioArtist,
-                          style: TextStyle(fontSize: 15,color: Colors.white70),
+                          style: TextStyle(fontSize: 15, color: Colors.white70),
                         ),
                       ),
                     ],
@@ -136,89 +152,85 @@ class _PlayMusicState extends State<PlayMusic> {
 
                 // ========= Player_Controls ========= //
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                  FavoriteButton(
-                      isFavorite: false,
-                      iconColor: Colors.red,
-                      iconSize: 40,
-                      iconDisabledColor: Colors.white70,
-                      valueChanged: (_isFavorite) {
-                        print('Is Favorite : $_isFavorite');
-                      }),
-                  // const Spacer(),
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FavoriteIcon(
+                        allSongs: allsongs,
+                        index: playing.index,
+                      ),
+                      // const Spacer(),
 
-                  // ====== Previous_button ====== //
-                  InkWell(
-                    child: IconButton(
-                      onPressed: playing.index != 0
-                          ? () {
-                              player.previous();
-                            }
-                          : () {},
-                      icon: playing.index == 0
-                          ? const Icon(
-                              CupertinoIcons.backward_end,
-                              color: Colors.white,
-                              size: 35,
-                            )
-                          : const Icon(
-                              Icons.skip_previous,
-                              color: Colors.white,
-                              size: 35,
-                            ),
-                    ),
-                  ),
-                  // const Spacer(),
+                      // ====== Previous_button ====== //
+                      InkWell(
+                        child: IconButton(
+                          onPressed: playing.index != 0
+                              ? () {
+                                  player.previous();
+                                }
+                              : () {},
+                          icon: playing.index == 0
+                              ? const Icon(
+                                  CupertinoIcons.backward_end,
+                                  color: Colors.white,
+                                  size: 35,
+                                )
+                              : const Icon(
+                                  Icons.skip_previous,
+                                  color: Colors.white,
+                                  size: 35,
+                                ),
+                        ),
+                      ),
+                      // const Spacer(),
 
-                  // ========= Play_button ========= //
-                  CircleAvatar(
-                    minRadius: 35,
-                    backgroundColor: Color.fromARGB(255, 64, 23, 76),
-                    foregroundColor: Colors.deepOrange,
-                    child: PlayerBuilder.isPlaying(
-                        player: player,
-                        builder: (context, isPlaying) {
-                          return IconButton(
-                            onPressed: (() {
-                              player.playOrPause();
+                      // ========= Play_button ========= //
+                      CircleAvatar(
+                        minRadius: 35,
+                        backgroundColor: Color.fromARGB(255, 64, 23, 76),
+                        foregroundColor: Colors.deepOrange,
+                        child: PlayerBuilder.isPlaying(
+                            player: player,
+                            builder: (context, isPlaying) {
+                              return IconButton(
+                                onPressed: (() {
+                                  player.playOrPause();
+                                }),
+                                icon: Icon(
+                                  isPlaying ? Icons.pause : Icons.play_arrow,
+                                  size: 35,
+                                ),
+                                color: Colors.white,
+                              );
                             }),
-                            icon: Icon(
-                              isPlaying ? Icons.pause : Icons.play_arrow,
-                              size: 35,
-                            ),
-                            color: Colors.white,
-                          );
-                        }),
-                  ),
-                  // ======= Next_button ======= //
-                  IconButton(
-                    onPressed: playing.index == fullSongs.length - 1
-                        ? () {}
-                        : () {
-                            player.next();
-                          },
-                    icon: playing.index == fullSongs.length - 1
-                        ? const Icon(
-                            CupertinoIcons.forward_end,
-                            color: Colors.white,
-                            size: 35,
-                          )
-                        : const Icon(
-                            Icons.skip_next,
-                            color: Colors.white,
-                            size: 35,
-                          ),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.playlist_add,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    onPressed: () {},
-                  ),
-                ])
+                      ),
+                      // ======= Next_button ======= //
+                      IconButton(
+                        onPressed: playing.index == fullSongs.length - 1
+                            ? () {}
+                            : () {
+                                player.next();
+                              },
+                        icon: playing.index == fullSongs.length - 1
+                            ? const Icon(
+                                CupertinoIcons.forward_end,
+                                color: Colors.white,
+                                size: 35,
+                              )
+                            : const Icon(
+                                Icons.skip_next,
+                                color: Colors.white,
+                                size: 35,
+                              ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.playlist_add,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ])
               ],
             ),
           );

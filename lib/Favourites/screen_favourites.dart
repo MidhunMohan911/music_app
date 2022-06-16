@@ -1,30 +1,24 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:music_app/Favourites/favorite_ref.dart';
-import 'package:music_app/Play%20Music/play_music.dart';
-import 'package:music_app/Splash%20Screen/splash_screen.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:music_app/Favourites/fav_add.dart';
+import 'package:music_app/Model/favmodel.dart';
+import 'package:music_app/Model/model.dart';
+import 'package:music_app/player/open_player.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
-List<dynamic> fListImg = [
-  'assets/let-me-zayn-malik.jpg',
-  'assets/xxxtentacion.jpg',
-  'assets/LSD.jpg',
-  'assets/see you again.jpg'
-];
-List<dynamic> fListTitle = [
-  'Let me',
-  'Moonlight',
-  'LSD',
-  'See You Again',
-];
-List<dynamic> fListArtist = [
-  'Zayn Malik',
-  'xxxTentacion',
-  'Sia',
-  'wiz Khalifa'
-];
-
-class ScreenFavorites extends StatelessWidget {
+class ScreenFavorites extends StatefulWidget {
   const ScreenFavorites({Key? key}) : super(key: key);
 
+  @override
+  State<ScreenFavorites> createState() => _ScreenFavoritesState();
+}
+
+List<Audio> favSong = [];
+
+class _ScreenFavoritesState extends State<ScreenFavorites> {
+  final box = SongBox.getInstance();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,48 +36,124 @@ class ScreenFavorites extends StatelessWidget {
         ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: const Text('Favorites'),
-          centerTitle: true,
-          toolbarHeight: 90,
-          elevation: 0,
           backgroundColor: Colors.transparent,
-          actions: const [
-            Icon(Icons.search),
-            SizedBox(
-              width: 20,
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemBuilder: ((BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: ((context) => PlayMusic(
-                                fullSongs: fullSongs,
-                                index: 0,
-                              )),
-                        ),
-                      );
+          appBar: AppBar(
+            title: const Text('Favourites'),
+            centerTitle: true,
+            toolbarHeight: 90,
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Color.fromARGB(255, 19, 51, 83),
+                                      Color.fromARGB(255, 112, 70, 161),
+                                      Color.fromARGB(255, 53, 38, 94),
+                                    ]),
+                              ),
+                              child: const FavoriteAdd(),
+                            );
+                          });
                     },
-                    child: FavoriteRef(
-                        favImage: fListImg[index],
-                        favTitle: fListTitle[index],
-                        favArtist: fListArtist[index]),
-                  );
-                }),
-                itemCount: fListImg.length,
-              ),
-            ),
-          ],
-        ),
-      ),
+                    icon: const Icon(
+                      CupertinoIcons.heart_circle,
+                      color: Colors.white,
+                      size: 25,
+                    )),
+              )
+            ],
+          ),
+          body: ValueListenableBuilder<Box<FavSongs>>(
+              valueListenable: Hive.box<FavSongs>(favboxname).listenable(),
+              builder: (BuildContext context, Box<FavSongs> favbox, child) {
+                List<FavSongs> favoriteSongs = favbox.values.toList();
+                return favoriteSongs.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No favourites songs',
+                          style: TextStyle(color: Colors.deepOrangeAccent),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: favoriteSongs.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: ListTile(
+                              onTap: () {
+                                for (var item in favoriteSongs) {
+                                  favSong.add(
+                                    Audio.file(
+                                      item.songurl!,
+                                      metas: Metas(
+                                        title: item.songname,
+                                        artist: item.artist,
+                                        id: item.id.toString(),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                OpenPlayer(
+                                        fullSongs: favSong,
+                                        index: index,
+                                        songId:
+                                            favSong[index].metas.id.toString())
+                                    .openAssetPlayer(
+                                        index: index, songs: favSong);
+                              },
+                              leading: QueryArtworkWidget(
+                                id: favoriteSongs[index].id!,
+                                type: ArtworkType.AUDIO,
+                                artworkBorder: BorderRadius.circular(20),
+                                artworkFit: BoxFit.cover,
+                                nullArtworkWidget: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(20)),
+                                  child: Image.asset(
+                                    'assets/tumblr_o1h4njg3ku1sgjgnbo1_500-3396.jpeg',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              title: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 3, left: 5, bottom: 3),
+                                child: Text(
+                                  favoriteSongs[index].songname!,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(color: Colors.white70),
+                                ),
+                              ),
+                              subtitle: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  favoriteSongs[index].artist!,
+                                  style: const TextStyle(color: Colors.white60),
+                                ),
+                              ),
+                              trailing: IconButton(
+                                onPressed: () {
+                                  favbox.deleteAt(index);
+                                  setState(() {});
+                                },
+                                icon: Icon(Icons.favorite),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+              })),
     );
   }
 }

@@ -27,8 +27,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigatetohome();
     requestStoragePermission();
+
+    _navigatetohome();
   }
 
   requestStoragePermission() async {
@@ -56,9 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         );
       });
-    }else{
-
-    }
+    } else {}
 
     // mappedSongs = allSongs
     //     .map(
@@ -142,7 +141,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         repeatForever: true,
                         animatedTexts: [
                           FlickerAnimatedText('find your'),
-                          FlickerAnimatedText('favorite tunes'),
+                          FlickerAnimatedText('favourite tunes..🎶'),
                         ],
                         onTap: () {},
                       ),

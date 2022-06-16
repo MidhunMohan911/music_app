@@ -3,10 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:marquee/marquee.dart';
+import 'package:music_app/Favourites/favorite_icon.dart';
 import 'package:music_app/Home/Drawer/settings.dart';
 import 'package:music_app/Home/Search/search_location.dart';
 import 'package:music_app/Model/model.dart';
 import 'package:music_app/Play%20Music/Mini%20Player/mini_player.dart';
+import 'package:music_app/Playlists/createplaylist.dart';
 
 import 'package:music_app/Splash%20Screen/splash_screen.dart';
 import 'package:music_app/bottomnav.dart';
@@ -102,7 +104,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                   //     builder: (context) => Search(fullSongs: fullSongs),
                   //   ),
                   // );
-                   showSearch(context: context, delegate: SearchLocation());
+                  showSearch(context: context, delegate: SearchLocation());
                 },
               ),
               const SizedBox(
@@ -187,83 +189,17 @@ class _ScreenHomeState extends State<ScreenHome> {
                               style: const TextStyle(color: Colors.white60),
                             ),
                             //                                    )
-                            trailing: Wrap(
+                            trailing: Column(
                               children: [
-                                InkWell(
-                                  onTap: () {},
-                                  child: const Icon(
-                                    CupertinoIcons.heart_fill,
-                                    color: Colors.white54,
-                                  ),
+                                Wrap(
+                                  children: [
+                                    FavoriteIcon(
+                                      allSongs: allDbSongs,
+                                      index: index,
+                                    ),
+                                    // const Spacer(),
+                                  ],
                                 ),
-                                // const Spacer(),
-                                InkWell(
-                                  child: const Icon(
-                                    Icons.more_vert,
-                                    color: Colors.white,
-                                  ),
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) => Container(
-                                              height: 200,
-                                              decoration: const BoxDecoration(
-                                                gradient: LinearGradient(
-                                                    begin: Alignment.topCenter,
-                                                    end: Alignment.bottomCenter,
-                                                    colors: [
-                                                      Color.fromARGB(
-                                                          255, 19, 51, 83),
-                                                      Color.fromARGB(
-                                                          255, 112, 70, 161),
-                                                      Color.fromARGB(
-                                                          255, 53, 38, 94),
-                                                    ]),
-                                              ),
-                                              child: Column(
-                                                // ignore: prefer_const_literals_to_create_immutables
-                                                children: [
-                                                  const ListTile(
-                                                    leading: Icon(
-                                                      Icons.playlist_add,
-                                                      color: Colors.white,
-                                                    ),
-                                                    title: Text(
-                                                      "Add to PlayList",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                  const ListTile(
-                                                    // ignore: unnecessary_const
-                                                    leading: const Icon(
-                                                      CupertinoIcons.tag_solid,
-                                                      color: Colors.white,
-                                                    ),
-                                                    title: Text(
-                                                      "Edit name",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                  const ListTile(
-                                                    // ignore: unnecessary_const
-                                                    leading: const Icon(
-                                                      CupertinoIcons
-                                                          .delete_solid,
-                                                      color: Colors.white,
-                                                    ),
-                                                    title: Text(
-                                                      "Remove",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ));
-                                  },
-                                )
                               ],
                             ),
                           ),
@@ -274,230 +210,55 @@ class _ScreenHomeState extends State<ScreenHome> {
                   itemCount: allDbSongs.length,
                 );
               })),
-
-      // FutureBuilder<List<SongModel>>(
-      //     future: audioQuery.querySongs(
-      //       sortType: null,
-      //       orderType: OrderType.ASC_OR_SMALLER,
-      //       uriType: UriType.EXTERNAL,
-      //       ignoreCase: true,
-      //     ),
-      //     builder: (context, item) {
-      //       if (item.data == null) {
-      //         return const Center(
-      //           child: CircularProgressIndicator(),
-      //         );
-      //       }
-      //       if (item.data!.isEmpty) {
-      //         return const Center(
-      //           child: Text(
-      //             'No songs found',
-      //           ),
-      //         );
-      //       }
-
-      //       return ValueListenableBuilder(
-      //           valueListenable: box.listenable(),
-      //           builder: ((context, value, child) => ListView.builder(
-      //                 itemBuilder: (context, index) => Padding(
-      //                   padding: const EdgeInsets.only(
-      //                       left: 10, right: 10, bottom: 5),
-      //                   child: Column(
-      //                     mainAxisAlignment: MainAxisAlignment.center,
-      //                     crossAxisAlignment: CrossAxisAlignment.start,
-      //                     children: [
-      //                       ListTile(
-      //                         // visualDensity:
-      //                         //     const VisualDensity(vertical: -3),
-      //                         onTap: (() async {
-      //                           final songid =
-      //                               fullSongs[index].metas.id.toString();
-      //                           await OpenPlayer(
-      //                                   fullSongs: [],
-      //                                   index: index,
-      //                                   songId: songid)
-      //                               .openAssetPlayer(
-      //                                   index: index, songs: fullSongs);
-      //                         }),
-      //                         //==============
-      //                         leading: QueryArtworkWidget(
-      //                           artworkFit: BoxFit.cover,
-      //                           id: int.parse(
-      //                               fullSongs[index].metas.id.toString()),
-      //                           // artworkBorder: BorderRadius.circular(5),
-      //                           type: ArtworkType.AUDIO,
-
-      //                           artworkQuality: FilterQuality.high,
-      //                           size: 2000,
-      //                           quality: 100,
-      //                           artworkBorder: BorderRadius.circular(20),
-
-      //                           //============No_Thumbnail=============//
-      //                           nullArtworkWidget: ClipRRect(
-      //                             borderRadius: const BorderRadius.all(
-      //                                 Radius.circular(20)),
-      //                             child: Image.asset(
-      //                               'assets/tumblr_o1h4njg3ku1sgjgnbo1_500-3396.jpeg',
-      //                               fit: BoxFit.cover,
-      //                             ),
-      //                           ),
-      //                         ),
-      //                         title: Text(
-      //                           fullSongs[index].metas.title!,
-      //                           maxLines: 1,
-      //                           overflow: TextOverflow.ellipsis,
-      //                           style: const TextStyle(color: Colors.white70),
-      //                         ),
-
-      //                         subtitle: Text(
-      //                           fullSongs[index].metas.artist!,
-      //                           maxLines: 1,
-      //                           overflow: TextOverflow.ellipsis,
-      //                           style: const TextStyle(color: Colors.white60),
-      //                         ),
-      //                         //                                    )
-      //                         trailing: Wrap(
-      //                           children: [
-      //                             InkWell(
-      //                               onTap: () {},
-      //                               child: const Icon(
-      //                                 CupertinoIcons.heart_fill,
-      //                                 color: Colors.white54,
-      //                               ),
-      //                             ),
-      //                             const Spacer(),
-      //                             InkWell(
-      //                               child: const Icon(
-      //                                 Icons.more_vert,
-      //                                 color: Colors.white,
-      //                               ),
-      //                               onTap: () {
-      //                                 showModalBottomSheet(
-      //                                     context: context,
-      //                                     builder: (context) => Container(
-      //                                           height: 200,
-      //                                           decoration:
-      //                                               const BoxDecoration(
-      //                                             gradient: LinearGradient(
-      //                                                 begin:
-      //                                                     Alignment.topCenter,
-      //                                                 end: Alignment
-      //                                                     .bottomCenter,
-      //                                                 colors: [
-      //                                                   Color.fromARGB(
-      //                                                       255, 19, 51, 83),
-      //                                                   Color.fromARGB(255,
-      //                                                       112, 70, 161),
-      //                                                   Color.fromARGB(
-      //                                                       255, 53, 38, 94),
-      //                                                 ]),
-      //                                           ),
-      //                                           child: Column(
-      //                                             // ignore: prefer_const_literals_to_create_immutables
-      //                                             children: [
-      //                                               const ListTile(
-      //                                                 leading: Icon(
-      //                                                   Icons.playlist_add,
-      //                                                   color: Colors.white,
-      //                                                 ),
-      //                                                 title: Text(
-      //                                                   "Add to PlayList",
-      //                                                   style: TextStyle(
-      //                                                       color:
-      //                                                           Colors.white),
-      //                                                 ),
-      //                                               ),
-      //                                               const ListTile(
-      //                                                 // ignore: unnecessary_const
-      //                                                 leading: const Icon(
-      //                                                   CupertinoIcons
-      //                                                       .tag_solid,
-      //                                                   color: Colors.white,
-      //                                                 ),
-      //                                                 title: Text(
-      //                                                   "Edit name",
-      //                                                   style: TextStyle(
-      //                                                       color:
-      //                                                           Colors.white),
-      //                                                 ),
-      //                                               ),
-      //                                               const ListTile(
-      //                                                 // ignore: unnecessary_const
-      //                                                 leading: const Icon(
-      //                                                   CupertinoIcons
-      //                                                       .delete_solid,
-      //                                                   color: Colors.white,
-      //                                                 ),
-      //                                                 title: Text(
-      //                                                   "Remove",
-      //                                                   style: TextStyle(
-      //                                                       color:
-      //                                                           Colors.white),
-      //                                                 ),
-      //                                               ),
-      //                                             ],
-      //                                           ),
-      //                                         ));
-      //                               },
-      //                             )
-      //                           ],
-      //                         ),
-      //                       ),
-      //                     ],
-      //                   ),
-      //                 ),
-      //                 itemCount: fullSongs.length,
-      //               )),);
-      //     }),
     );
   }
+}
 
-  // Future<void> requestStoragePermission() async {
-  //   bool permissionStatus = await audioQuery.permissionsStatus();
-  //   if (!permissionStatus) {
-  //     await audioQuery.permissionsRequest();
-  //   }
-  //   setState(() {});
-  //   fetchSongs = await audioQuery.querySongs();
+class PlButtonHome extends StatefulWidget {
+  const PlButtonHome({Key? key}) : super(key: key);
 
-  //   for (var element in fetchSongs) {
-  //     if (element.fileExtension == 'mp3') {
-  //       allSongs.add(element);
-  //     }
-  //   }
-  //   mappedSongs = allSongs
-  //       .map((audio) => Songs(
-  //           songname: audio.title,
-  //           artist: audio.artist,
-  //           duration: audio.duration,
-  //           songurl: audio.uri,
-  //           id: audio.id))
-  //       .toList();
+  @override
+  State<PlButtonHome> createState() => _PlButtonHomeState();
+}
 
-  //   await box.put('musics', mappedSongs);
-  //   dbSongs = box.get('musics') as List<Songs>;
-
-  //   for (var element in dbSongs) {
-  //     fullSongs.add(
-  //       Audio.file(
-  //         element.songurl.toString(),
-  //         metas: Metas(
-  //             title: element.songname,
-  //             id: element.id.toString(),
-  //             artist: element.artist),
-  //       ),
-  //     );
-  //     Navigator.of(context).pushAndRemoveUntil(
-  //         MaterialPageRoute(
-  //           builder: ((context) => const BottomNav()),
-  //         ),
-  //         (route) => false);
-  //   }
-  //   setState(() {});
-  // }
-
-  // Songs findWatchlaterSongs(List<Songs> recently, String id) {
-  //   return recently
-  //       .firstWhere((element) => element.songurl.toString().contains(id));
-  // }
+class _PlButtonHomeState extends State<PlButtonHome> {
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return Container(
+                decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                      Color.fromARGB(255, 25, 39, 104),
+                      Color.fromARGB(255, 59, 42, 100),
+                      Color.fromARGB(255, 52, 8, 79)
+                    ])),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.playlist_add),
+                      title: const Text(
+                        'Create new playlist',
+                        style: TextStyle(color: Colors.white70, fontSize: 18),
+                      ),
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => CreatePlaylist());
+                      },
+                    )
+                  ],
+                ),
+              );
+            });
+      },
+      icon: Icon(Icons.more_vert),
+    );
+  }
 }
