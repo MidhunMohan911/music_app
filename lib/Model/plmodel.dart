@@ -4,7 +4,7 @@ import 'package:music_app/Model/model.dart';
 part 'plmodel.g.dart';
 
 @HiveType(typeId: 2)
-class PlSongs {
+class PlSongs extends HiveObject{
   @HiveField(0)
   String? playlistName;
 

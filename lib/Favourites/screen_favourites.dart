@@ -2,6 +2,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:music_app/Favourites/fav_add.dart';
 import 'package:music_app/Model/favmodel.dart';
 import 'package:music_app/Model/model.dart';
@@ -18,9 +19,11 @@ class ScreenFavorites extends StatefulWidget {
 List<Audio> favSong = [];
 
 class _ScreenFavoritesState extends State<ScreenFavorites> {
-  final box = SongBox.getInstance();
+  // final box = SongBox.getInstance();
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -38,7 +41,18 @@ class _ScreenFavoritesState extends State<ScreenFavorites> {
       child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            title: const Text('Favourites'),
+            title: const Text(
+              'Favourites',
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.italic,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 14,
+                      color: Colors.red,
+                    )
+                  ]),
+            ),
             centerTitle: true,
             toolbarHeight: 90,
             elevation: 0,
@@ -79,17 +93,23 @@ class _ScreenFavoritesState extends State<ScreenFavorites> {
               builder: (BuildContext context, Box<FavSongs> favbox, child) {
                 List<FavSongs> favoriteSongs = favbox.values.toList();
                 return favoriteSongs.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'No favourites songs',
-                          style: TextStyle(color: Colors.deepOrangeAccent),
+                    ? Center(
+                        child: Column(
+                          children: [
+                            SizedBox(height: height * .30),
+                            // Lottie.network('https://assets2.lottiefiles.com/packages/lf20_mmwivxcd.json',
+                            // width: 30,
+                            // height: 30,
+                            // ),
+                            const Text('No favourites')
+                          ],
                         ),
                       )
                     : ListView.builder(
                         itemCount: favoriteSongs.length,
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: ListTile(
                               onTap: () {
                                 for (var item in favoriteSongs) {
@@ -147,7 +167,10 @@ class _ScreenFavoritesState extends State<ScreenFavorites> {
                                   favbox.deleteAt(index);
                                   setState(() {});
                                 },
-                                icon: Icon(Icons.favorite),
+                                icon: const Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                ),
                               ),
                             ),
                           );

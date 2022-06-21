@@ -30,10 +30,10 @@ class FavSongs {
 }
 String favboxname = 'favSongs';
 
-class FavSongBox {
-  static Box<FavSongs>? _favbox;
+// class FavSongBox {
+//   static Box<FavSongs>? _favbox;
 
-  static Box<FavSongs> getInstance() {
-    return _favbox ??= Hive.box(favboxname);
-  }
-}
+//   static Box<FavSongs> getInstance() {
+//     return _favbox ??= Hive.box(favboxname);
+//   }
+// }

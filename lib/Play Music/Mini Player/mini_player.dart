@@ -37,9 +37,12 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
                   colors: [
+                    Colors.black,
                     Color.fromARGB(255, 63, 20, 71),
                     Color.fromARGB(255, 17, 5, 1),
-                  ]),
+                  ],
+                  tileMode: TileMode.clamp
+                  ),
             ),
             child: player.builderCurrent(
               builder: ((context, Playing? playing) {
@@ -86,7 +89,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         velocity: 20,
                         text: playing!.audio.audio.metas.title!,
                         style: const TextStyle(
-                            color: Colors.white60, fontSize: 18),
+                            color: Colors.white70, fontSize: 18),
                       ),
                     ),
                     subtitle: SizedBox(
@@ -95,7 +98,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         blankSpace: 20,
                         velocity: 20,
                         text: playing.audio.audio.metas.artist!,
-                        style: const TextStyle(color: Colors.white38),
+                        style: const TextStyle(color: Colors.white60),
                       ),
                     ),
                     trailing: Wrap(
@@ -112,13 +115,13 @@ class _MiniPlayerState extends State<MiniPlayer> {
                               ? const Icon(
                                   CupertinoIcons.backward_end,
                                   color: Colors.white60,
-                                  size: 30,
+                                  size: 26,
                                 )
                               : const Icon(
-                                  Icons.skip_previous,
-                                  color: Colors.white60,
-                                  size: 30,
-                                ),
+                                    Icons.skip_previous,
+                                    color: Colors.white60,
+                                    size: 30,
+                                  )
                         ),
 
                         //<<<<<<< Play >>>>>>>//
@@ -148,7 +151,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                 ? const Icon(
                                     CupertinoIcons.forward_end,
                                     color: Colors.white60,
-                                    size: 30,
+                                    size: 26,
                                   )
                                 : const Icon(
                                     Icons.skip_next,

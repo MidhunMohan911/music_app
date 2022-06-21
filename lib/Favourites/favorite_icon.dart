@@ -20,7 +20,6 @@ class FavoriteIcon extends StatefulWidget {
 
 class _FavoriteIconState extends State<FavoriteIcon> {
   // final box = SongBox.getInstance();
-
   // List<Audio> fullSongs = [];
   List<FavSongs> favoriteSongs = [];
   late Box<FavSongs> favBox;
@@ -57,13 +56,13 @@ class _FavoriteIconState extends State<FavoriteIcon> {
               );
               setState(() {});
 
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(widget.allSongs[widget.index].songname! +
-                      'Added to favourites')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(widget.allSongs[widget.index].songname! +
+                        'Added to favourites')));
             },
             icon: const Icon(
               Icons.favorite,
-              color: Colors.white,
+              color: Colors.white70,
             ))
         : IconButton(
             onPressed: () {

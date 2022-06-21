@@ -12,7 +12,7 @@ class FavoriteAdd extends StatefulWidget {
 }
 
 class _FavoriteAddState extends State<FavoriteAdd> {
-  List<Songs> dbSongs = [];
+   List<Songs> dbSongs = [];
   late Box<Songs> allsongbox;
   // late Box<FavSongs> favsongbox;
 
@@ -37,10 +37,12 @@ class _FavoriteAddState extends State<FavoriteAdd> {
           leading: QueryArtworkWidget(
             id: allsongs[index].id!,
             type: ArtworkType.AUDIO,
-            artworkBorder: BorderRadius.circular(50),
+            artworkBorder: BorderRadius.circular(20),
             artworkFit: BoxFit.cover,
-            nullArtworkWidget: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(40)),
+            nullArtworkWidget: 
+            
+            ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
               child: Image.asset(
                 'assets/tumblr_o1h4njg3ku1sgjgnbo1_500-3396.jpeg',
                 fit: BoxFit.cover,

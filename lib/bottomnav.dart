@@ -1,4 +1,5 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/Favourites/screen_favourites.dart';
 import 'package:music_app/Home/screen_home.dart';
@@ -41,8 +42,8 @@ class _BottomNavState extends State<BottomNav> {
         ),
       ),
       child: Scaffold(
+        bottomSheet: const MiniPlayer(),
         backgroundColor: Colors.transparent,
-        // bottomSheet: const MiniPlayer(),
         body: _pages[_currentSelectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentSelectedIndex,
@@ -57,7 +58,7 @@ class _BottomNavState extends State<BottomNav> {
           unselectedItemColor: Colors.black,
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home_outlined), label: 'Home'),
+                icon: Icon(CupertinoIcons.music_house), label: 'Home'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.favorite_border), label: 'Favourites'),
             BottomNavigationBarItem(

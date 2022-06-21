@@ -1,17 +1,12 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:marquee/marquee.dart';
 import 'package:music_app/Favourites/favorite_icon.dart';
 import 'package:music_app/Home/Drawer/settings.dart';
 import 'package:music_app/Home/Search/search_location.dart';
 import 'package:music_app/Model/model.dart';
-import 'package:music_app/Play%20Music/Mini%20Player/mini_player.dart';
+import 'package:music_app/Model/plmodel.dart';
 import 'package:music_app/Playlists/createplaylist.dart';
-
-import 'package:music_app/Splash%20Screen/splash_screen.dart';
-import 'package:music_app/bottomnav.dart';
 import 'package:music_app/player/open_player.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -23,7 +18,7 @@ class ScreenHome extends StatefulWidget {
 }
 
 class _ScreenHomeState extends State<ScreenHome> {
-  final OnAudioQuery audioQuery = OnAudioQuery();
+  // final OnAudioQuery audioQuery = OnAudioQuery();
   final box = SongBox.getInstance();
 
   List<Audio> convertAudios = [];
@@ -47,7 +42,7 @@ class _ScreenHomeState extends State<ScreenHome> {
 
   @override
   Widget build(BuildContext context) {
-    // List<Songs> songs = box.values.toList();
+  // List<Songs> songs = box.values.toList();
 
     return Container(
       decoration: const BoxDecoration(
@@ -64,7 +59,6 @@ class _ScreenHomeState extends State<ScreenHome> {
         ),
       ),
       child: Scaffold(
-          bottomSheet: const MiniPlayer(),
           drawer: const SettingsDrawer(),
           backgroundColor: Colors.transparent,
           appBar: AppBar(
@@ -85,8 +79,14 @@ class _ScreenHomeState extends State<ScreenHome> {
               'Noisy Dose',
               style: TextStyle(
                 fontSize: 32,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 fontStyle: FontStyle.italic,
+                shadows: [
+                  Shadow(
+                    color: Colors.red,
+                    blurRadius: 15
+                  )
+                ]
               ),
             ),
             shape: const RoundedRectangleBorder(
@@ -99,11 +99,6 @@ class _ScreenHomeState extends State<ScreenHome> {
               IconButton(
                 icon: const Icon(Icons.search),
                 onPressed: () {
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) => Search(fullSongs: fullSongs),
-                  //   ),
-                  // );
                   showSearch(context: context, delegate: SearchLocation());
                 },
               ),
@@ -135,8 +130,6 @@ class _ScreenHomeState extends State<ScreenHome> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ListTile(
-                            // visualDensity:
-                            //     const VisualDensity(vertical: -3),
                             onTap: () async {
                               final songid =
                                   convertAudios[index].metas.id.toString();
@@ -179,7 +172,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                               songs.songname!,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(color: Colors.white70),
+                              style: const TextStyle(color: Colors.white),
                             ),
 
                             subtitle: Text(
@@ -189,17 +182,17 @@ class _ScreenHomeState extends State<ScreenHome> {
                               style: const TextStyle(color: Colors.white60),
                             ),
                             //                                    )
-                            trailing: Column(
+                            trailing: Wrap(
                               children: [
-                                Wrap(
-                                  children: [
-                                    FavoriteIcon(
-                                      allSongs: allDbSongs,
-                                      index: index,
-                                    ),
-                                    // const Spacer(),
-                                  ],
+                                FavoriteIcon(
+                                  allSongs: allDbSongs,
+                                  index: index,
                                 ),
+                                // const Spacer(),
+
+                                PlButtonHome(
+                                  songIndex: index,
+                                )
                               ],
                             ),
                           ),
@@ -214,51 +207,233 @@ class _ScreenHomeState extends State<ScreenHome> {
   }
 }
 
-class PlButtonHome extends StatefulWidget {
-  const PlButtonHome({Key? key}) : super(key: key);
+class PlButtonHome extends StatelessWidget {
+  
+  PlButtonHome({
+    Key? key,
+    required this.songIndex,
+  }) : super(key: key);
 
-  @override
-  State<PlButtonHome> createState() => _PlButtonHomeState();
-}
+  int songIndex;
 
-class _PlButtonHomeState extends State<PlButtonHome> {
   @override
   Widget build(BuildContext context) {
+        final height = MediaQuery.of(context).size.height;
+
     return IconButton(
       onPressed: () {
         showModalBottomSheet(
             context: context,
             builder: (context) {
-              return Container(
-                decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                      Color.fromARGB(255, 25, 39, 104),
-                      Color.fromARGB(255, 59, 42, 100),
-                      Color.fromARGB(255, 52, 8, 79)
-                    ])),
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.playlist_add),
-                      title: const Text(
-                        'Create new playlist',
-                        style: TextStyle(color: Colors.white70, fontSize: 18),
-                      ),
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => CreatePlaylist());
-                      },
-                    )
-                  ],
-                ),
-              );
+              return StatefulBuilder(
+                  builder: (context, setState) => Container(
+                        decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                              Color.fromARGB(255, 25, 39, 104),
+                              Color.fromARGB(255, 59, 42, 100),
+                              Color.fromARGB(255, 52, 8, 79)
+                            ])),
+                        child: ValueListenableBuilder<Box<PlSongs>>(
+                            valueListenable:
+                                Hive.box<PlSongs>(plboxname).listenable(),
+                            builder: (BuildContext context,
+                                Box<PlSongs> playlistBox, _) {
+                              List<PlSongs> playlists =
+                                  playlistBox.values.toList();
+
+                              if (playlistBox.isEmpty) {
+                                return Column(
+                                  children: [
+                                    ListTile(
+                                      leading: const Icon(Icons.playlist_add),
+                                      title: const Text(
+                                        'Create new playlist',
+                                        style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 18),
+                                      ),
+                                      onTap: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                CreatePlaylist());
+                                      },
+                                    ),
+                                     Center(
+                                      child: 
+                                      Column(
+                                        
+                                        children: [
+                                          SizedBox(height: height*.2),
+                                          // Lottie.network('https://assets2.lottiefiles.com/packages/lf20_mmwivxcd.json',
+                                          // width: 30,
+                                          // height: 30,
+                                          // ),
+                                          Text('No playlists')
+                                        ],
+                                      ),
+                                      
+                                    ),
+                                     
+                                  ],
+                                );
+                              }
+
+                              return Column(
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.playlist_add),
+                                    title: const Text(
+                                      'Create new playlist',
+                                      style: TextStyle(
+                                          color: Colors.white70, fontSize: 18),
+                                    ),
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              CreatePlaylist());
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: playlists.length,
+                                      itemBuilder:
+                                          (BuildContext ctx, int index) =>
+                                              Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  gradient:
+                                                      const LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    colors: [
+                                                      Color.fromARGB(
+                                                          255, 35, 26, 80),
+                                                      Color.fromARGB(
+                                                          255, 31, 5, 125),
+                                                      Color.fromARGB(
+                                                          255, 28, 2, 65)
+                                                    ],
+                                                    tileMode: TileMode.clamp,
+                                                  )),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(6.0),
+                                                child: ListTile(
+                                                  leading: const Text(
+                                                    '🎧',
+                                                    style:
+                                                        TextStyle(fontSize: 20),
+                                                  ),
+                                                  title: Text(
+                                                    playlists[index]
+                                                        .playlistName!,
+                                                    style: const TextStyle(
+                                                        color: Colors.white70,
+                                                        fontSize: 17),
+                                                  ),
+                                                  onTap: () {
+                                                    PlSongs? plsongs =
+                                                        playlistBox
+                                                            .getAt(index);
+
+                                                    List<Songs>? plnewSongs =
+                                                        plsongs!.playlistSongs;
+
+                                                    Box<Songs> box =
+                                                        Hive.box<Songs>(
+                                                            boxname);
+
+                                                    List<Songs> dbAllSongs =
+                                                        box.values.toList();
+
+                                                    bool isAlreadyAdded =
+                                                        plnewSongs!.any(
+                                                      (element) =>
+                                                          element.id ==
+                                                          dbAllSongs[songIndex]
+                                                              .id,
+                                                    );
+
+                                                    if (!isAlreadyAdded) {
+                                                      plnewSongs.add(
+                                                        Songs(
+                                                          songname: dbAllSongs[
+                                                                  songIndex]
+                                                              .songname,
+                                                          artist: dbAllSongs[
+                                                                  songIndex]
+                                                              .artist,
+                                                          duration: dbAllSongs[
+                                                                  songIndex]
+                                                              .duration,
+                                                          songurl: dbAllSongs[
+                                                                  songIndex]
+                                                              .songurl,
+                                                          id: dbAllSongs[
+                                                                  songIndex]
+                                                              .id,
+                                                        ),
+                                                      );
+
+                                                      playlistBox.putAt(
+                                                        index,
+                                                        PlSongs(
+                                                            playlistName:
+                                                                playlists[index]
+                                                                    .playlistName,
+                                                            playlistSongs:
+                                                                plnewSongs),
+                                                      );
+
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(SnackBar(
+                                                              content: Text(dbAllSongs[
+                                                                          songIndex]
+                                                                      .songname! +
+                                                                  'Added to ' +
+                                                                  playlists[
+                                                                          index]
+                                                                      .playlistName!)));
+                                                    } else {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(SnackBar(
+                                                              content: Text(dbAllSongs[
+                                                                          songIndex]
+                                                                      .songname! +
+                                                                  ' is already added')));
+                                                    }
+                                                    Navigator.pop(ctx);
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
+                      ));
             });
       },
-      icon: Icon(Icons.more_vert),
+      icon: const Icon(
+        Icons.more_vert,
+        color: Colors.white70,
+      ),
     );
   }
 }

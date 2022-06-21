@@ -19,7 +19,6 @@ class _CreatePlaylistState extends State<CreatePlaylist> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     plBox = Hive.box<PlSongs>(plboxname);
   }
@@ -30,7 +29,7 @@ class _CreatePlaylistState extends State<CreatePlaylist> {
       backgroundColor: Colors.black,
       title: const Text(
         'Playlist Name',
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        style: TextStyle(color: Colors.white70, fontSize: 16),
       ),
       content: Form(
           key: formkey,
@@ -39,7 +38,7 @@ class _CreatePlaylistState extends State<CreatePlaylist> {
             style: const TextStyle(color: Colors.black),
             decoration: const InputDecoration(
                 hintText: 'Enter a playlistName',
-                fillColor: Colors.white,
+                fillColor: Colors.white70,
                 filled: true),
             validator: (value) {
               List<PlSongs> values = plBox.values.toList();
@@ -66,7 +65,7 @@ class _CreatePlaylistState extends State<CreatePlaylist> {
               },
               child: const Text(
                 'cancel',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white70),
               ),
             ),
             const Spacer(),
@@ -86,7 +85,7 @@ class _CreatePlaylistState extends State<CreatePlaylist> {
                 },
                 child: const Text(
                   'save',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white70),
                 ))
           ],
         )

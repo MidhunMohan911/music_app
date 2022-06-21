@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
@@ -21,15 +20,16 @@ List<SongModel> fetchSongs = [];
 List<SongModel> allSongs = [];
 List<Audio> fullSongs = [];
 // List<Songs> dbSongs = [];
-List<Songs> mappedSongs = [];
+// List<Songs> mappedSongs = [];
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    super.initState();
     requestStoragePermission();
-
     _navigatetohome();
+    super.initState();
+    
+    
   }
 
   requestStoragePermission() async {
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!permissionStatus) {
       await audioQuery.permissionsRequest();
 
-      setState(() {});
+      
       fetchSongs = await audioQuery.querySongs();
 
       for (var element in fetchSongs) {
@@ -146,19 +146,6 @@ class _SplashScreenState extends State<SplashScreen> {
                         onTap: () {},
                       ),
                     ),
-
-                    // child: DefaultTextStyle(
-                    //   style: const TextStyle(
-                    //     fontSize: 25.0,
-                    //   ),
-                    //   child: AnimatedTextKit(
-                    //     animatedTexts: [
-                    //       WavyAnimatedText('We Drift deeper in to the Sound'),
-                    //     ],
-                    //     isRepeatingAnimation: true,
-                    //     onTap: () {},
-                    //   ),
-                    // ),
                   ),
                 ],
               )

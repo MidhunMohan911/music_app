@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:music_app/Home/Drawer/drawer.dart';
+import 'package:music_app/dialogs/policy.dart';
 import 'package:switcher_button/switcher_button.dart';
 
 class SettingsDrawer extends StatefulWidget {
@@ -39,52 +39,91 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
               const Center(
                 child: Text(
                   'Settings',
-                  style: TextStyle(color: Colors.white,fontSize: 30),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontStyle: FontStyle.italic,
+                      shadows: [Shadow(color: Colors.red, blurRadius: 15)]),
                 ),
               ),
-              const SizedBox(height: 10,),
-              const Divider(thickness: 3,),
-              const SizedBox(height: 10,),
-              DrawerRef(
-                dIcon: const Icon(
-                  Icons.chat_outlined,
-                ),
-                dText: 'Feedback',
-                dTrail: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.arrow_forward_ios_outlined),
-                ),
+              const SizedBox(
+                height: 10,
               ),
-              DrawerRef(
-                dIcon: const Icon(
-                  Icons.error_outline,
-                ),
-                dText: 'About',
-                dTrail: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.arrow_forward_ios_outlined),
-                ),
+              const Divider(
+                thickness: 3,
               ),
-              DrawerRef(
-                dIcon: const Icon(
-                  Icons.notifications_outlined,
+              const SizedBox(
+                height: 10,
+              ),
+              ListTile(
+                leading: const Icon(Icons.share),
+                title: const Text(
+                  'Share',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w400),
                 ),
-                dText: 'Notifications',
-                dTrail: SwitcherButton(
+                onTap: () {},
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.notifications_active_outlined,
+                ),
+                title: const Text(
+                  'Notification',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w400),
+                ),
+                trailing: SwitcherButton(
                   value: true,
-                  size: 30,
+                  size: 27,
                   onChange: (value) {},
                 ),
+                onTap: () {},
               ),
-              DrawerRef(
-                dIcon: const Icon(
-                  Icons.chat_outlined,
+              ListTile(
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: const Text(
+                  'Privacy Policy',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w400),
                 ),
-                dText: 'Share',
-                dTrail: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.share),
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (builder) {
+                        return Policy(mdFilename: 'privacy_policy.md');
+                      });
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.verified_user_outlined),
+                title: const Text(
+                  'Terms & Conditions',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w400),
                 ),
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (builder) {
+                        return Policy(mdFilename: 'terms_&_condition.md');
+                      });
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text(
+                  'About',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w400),
+                ),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const About(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(
                 height: 50,
@@ -94,20 +133,54 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                 children: const [
                   Text(
                     'Version',
-                    style: TextStyle(fontSize: 15, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   Text(
-                    '10.7.5',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
+                    '2.7.5',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w300),
                   )
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class About extends StatelessWidget {
+  const About({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      
+      data: ThemeData.from(
+          colorScheme: ColorScheme.fromSwatch(
+              primaryColorDark: Colors.white70,
+              cardColor: Colors.white70,
+              backgroundColor: Colors.white70,
+              accentColor: Colors.black
+              ),
+              ),
+      child: LicensePage(
+        applicationIcon: Image.asset(
+          'assets/1.png',
+          width: 200,
+          height: 200,
+        ),
+        applicationVersion: '2.7.5',
+        applicationLegalese: 'Developed by MIDHUN M',
       ),
     );
   }

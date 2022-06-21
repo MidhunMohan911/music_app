@@ -6,6 +6,7 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:hive/hive.dart';
 import 'package:marquee/marquee.dart';
 import 'package:music_app/Favourites/favorite_icon.dart';
+import 'package:music_app/Home/screen_home.dart';
 import 'package:music_app/Splash%20Screen/splash_screen.dart';
 import 'package:music_app/bottomnav.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -26,6 +27,7 @@ class PlayMusic extends StatefulWidget {
 }
 
 AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
+bool isRepeat = false;
 
 // Audio find(List<Audio> source, String fromPath) {
 //   return source.firstWhere((element) => element.path == fromPath);
@@ -47,6 +49,8 @@ class _PlayMusicState extends State<PlayMusic> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     // dbSongs = box.get('musics') as List<Songs>;
 
     allsongs = box.values.toList();
@@ -58,10 +62,10 @@ class _PlayMusicState extends State<PlayMusic> {
           end: Alignment.bottomLeft,
           stops: [0.1, 0.5, 0.7, 0.9],
           colors: [
-            Color.fromARGB(255, 3, 46, 80),
-            Color.fromARGB(255, 39, 12, 89),
-            Color.fromARGB(255, 34, 4, 74),
-            Color.fromARGB(255, 51, 37, 77),
+            Color.fromARGB(255, 2, 24, 41),
+            Color.fromARGB(255, 34, 12, 73),
+            Color.fromARGB(255, 29, 6, 60),
+            Color.fromARGB(255, 24, 17, 37),
           ],
         ),
       ),
@@ -85,6 +89,7 @@ class _PlayMusicState extends State<PlayMusic> {
           return Center(
             child: Column(
               children: [
+                SizedBox(height: height * .03),
                 SizedBox(
                   height: 300,
                   width: 300,
@@ -117,24 +122,27 @@ class _PlayMusicState extends State<PlayMusic> {
                   padding: const EdgeInsets.symmetric(horizontal: 60),
                   child: Column(
                     children: [
+                      SizedBox(height: height * .02),
                       SizedBox(
-                        height: 30,
-                        width: 300,
+                        height: height * .03,
+                        width: width * .3,
                         child: Marquee(
                           blankSpace: 20,
                           velocity: 20,
                           text: player.getCurrentAudioTitle,
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                          style: const TextStyle(
+                              fontSize: 18, color: Colors.white),
                         ),
                       ),
                       SizedBox(
-                        height: 30,
-                        width: 150,
+                        height: height * .03,
+                        width: width * .15,
                         child: Marquee(
                           blankSpace: 20,
                           velocity: 20,
                           text: player.getCurrentAudioArtist,
-                          style: TextStyle(fontSize: 15, color: Colors.white70),
+                          style: const TextStyle(
+                              fontSize: 15, color: Colors.white70),
                         ),
                       ),
                     ],
@@ -143,6 +151,22 @@ class _PlayMusicState extends State<PlayMusic> {
                 // SizedBox(
                 //   height: MediaQuery.of(context).size.height * 0.02,
                 // ),
+                // ======== fav & playlist ======== //
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                    FavoriteIcon(
+                        allSongs: allsongs,
+                        index: playing.index,
+                      ),
+                        PlButtonHome(
+                        songIndex: playing.index,
+                      )
+                    ],
+                  ),
+                ),
 
                 // ========= Progress_bar ========= //
                 seekBarWidget(context),
@@ -152,85 +176,108 @@ class _PlayMusicState extends State<PlayMusic> {
 
                 // ========= Player_Controls ========= //
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      FavoriteIcon(
-                        allSongs: allsongs,
-                        index: playing.index,
-                      ),
-                      // const Spacer(),
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    
+                    // const Spacer(),
+                    // ====== Shuffle ====== //
+                    IconButton(
+                        onPressed: () {
+                          player.toggleShuffle();
+                          setState(() {});
+                        },
+                        icon: player.isShuffling.value ? const Icon(Icons.shuffle_on_outlined,
+                            color: 
+                                 
+                                 Colors.white)
+                                 : const Icon(Icons.shuffle,
+                                 color: Colors.white,)
+                                 ),
 
-                      // ====== Previous_button ====== //
-                      InkWell(
-                        child: IconButton(
-                          onPressed: playing.index != 0
-                              ? () {
-                                  player.previous();
-                                }
-                              : () {},
-                          icon: playing.index == 0
-                              ? const Icon(
-                                  CupertinoIcons.backward_end,
-                                  color: Colors.white,
-                                  size: 35,
-                                )
-                              : const Icon(
-                                  Icons.skip_previous,
-                                  color: Colors.white,
-                                  size: 35,
-                                ),
-                        ),
-                      ),
-                      // const Spacer(),
+                    // ====== Previous_button ====== //
+                    IconButton(
+                      onPressed: playing.index != 0
+                          ? () {
+                              player.previous();
+                            }
+                          : () {},
+                      icon: playing.index == 0
+                          ? const Icon(
+                              CupertinoIcons.backward_end,
+                              color: Colors.white,
+                              size: 30,
+                            )
+                          : const Icon(
+                              Icons.skip_previous,
+                              color: Colors.white,
+                              size: 35,
+                            ),
+                    ),
+                    // const Spacer(),
 
-                      // ========= Play_button ========= //
-                      CircleAvatar(
-                        minRadius: 35,
-                        backgroundColor: Color.fromARGB(255, 64, 23, 76),
-                        foregroundColor: Colors.deepOrange,
-                        child: PlayerBuilder.isPlaying(
-                            player: player,
-                            builder: (context, isPlaying) {
-                              return IconButton(
-                                onPressed: (() {
-                                  player.playOrPause();
-                                }),
-                                icon: Icon(
-                                  isPlaying ? Icons.pause : Icons.play_arrow,
-                                  size: 35,
-                                ),
-                                color: Colors.white,
-                              );
-                            }),
-                      ),
-                      // ======= Next_button ======= //
-                      IconButton(
-                        onPressed: playing.index == fullSongs.length - 1
-                            ? () {}
-                            : () {
-                                player.next();
-                              },
-                        icon: playing.index == fullSongs.length - 1
-                            ? const Icon(
-                                CupertinoIcons.forward_end,
-                                color: Colors.white,
-                                size: 35,
-                              )
-                            : const Icon(
-                                Icons.skip_next,
-                                color: Colors.white,
+                    // ========= Play_button ========= //
+                    CircleAvatar(
+                      minRadius: 35,
+                      backgroundColor: Color.fromARGB(255, 37, 3, 47),
+                      foregroundColor: Colors.deepOrange,
+                      child: PlayerBuilder.isPlaying(
+                          player: player,
+                          builder: (context, isPlaying) {
+                            return IconButton(
+                              onPressed: (() {
+                                player.playOrPause();
+                              }),
+                              icon: Icon(
+                                isPlaying ? Icons.pause : Icons.play_arrow,
                                 size: 35,
                               ),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.playlist_add,
-                          color: Colors.white,
-                          size: 30,
+                              color: Colors.white,
+                            );
+                          }),
+                    ),
+                    // ======= Next_button ======= //
+                    IconButton(
+                      onPressed: playing.index == fullSongs.length - 1
+                          ? () {}
+                          : () {
+                              player.next();
+                            },
+                      icon: playing.index == fullSongs.length - 1
+                          ? const Icon(
+                              CupertinoIcons.forward_end,
+                              color: Colors.white,
+                              size: 30,
+                            )
+                          : const Icon(
+                              Icons.skip_next,
+                              color: Colors.white,
+                              size: 35,
+                            ),
+                    ),
+                    // ======== Repeat mode ======= //
+                    IconButton(
+                        onPressed: () {
+                          if (isRepeat) {
+                            player.setLoopMode(LoopMode.none);
+                            isRepeat = false;
+                          } else {
+                            player.setLoopMode(LoopMode.single);
+                            isRepeat = true;
+                          }
+                          setState(() {
+                            
+                          });
+                        },
+                        icon: isRepeat ? const Icon(
+                          Icons.repeat_one_sharp,
+                          color:  Colors.white 
+                        )
+                        : const Icon(Icons.repeat,
+                        color: Colors.white,)
                         ),
-                        onPressed: () {},
-                      ),
-                    ])
+                  
+                  ],
+                ),
               ],
             ),
           );
