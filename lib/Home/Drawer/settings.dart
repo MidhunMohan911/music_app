@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_app/dialogs/policy.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:switcher_button/switcher_button.dart';
 
 class SettingsDrawer extends StatefulWidget {
@@ -62,7 +63,10 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.w400),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Share.share(
+                      'https://github.com/MidhunMohan911/music_app.git');
+                },
               ),
               ListTile(
                 leading: const Icon(
@@ -164,15 +168,13 @@ class About extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      
       data: ThemeData.from(
-          colorScheme: ColorScheme.fromSwatch(
-              primaryColorDark: Colors.white70,
-              cardColor: Colors.white70,
-              backgroundColor: Colors.white70,
-              accentColor: Colors.black
-              ),
-              ),
+        colorScheme: ColorScheme.fromSwatch(
+            primaryColorDark: Colors.white70,
+            cardColor: Colors.white70,
+            backgroundColor: Colors.white70,
+            accentColor: Colors.black),
+      ),
       child: LicensePage(
         applicationIcon: Image.asset(
           'assets/1.png',
