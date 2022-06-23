@@ -20,7 +20,7 @@ class BottomNav extends StatefulWidget {
 class _BottomNavState extends State<BottomNav> {
   int _currentSelectedIndex = 0;
 
-  final List<Widget> _pages =<Widget> [
+  final List<Widget> _pages = <Widget>[
     const ScreenHome(),
     const ScreenFavorites(),
     const ScreenPlaylist(),
@@ -32,8 +32,8 @@ class _BottomNavState extends State<BottomNav> {
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
-             Color.fromARGB(255, 58, 53, 116),
-             Color.fromARGB(255, 50, 13, 103)
+            Color.fromARGB(255, 58, 53, 116),
+            Color.fromARGB(255, 50, 13, 103)
           ],
           begin: Alignment.topLeft,
           end: Alignment.topRight,
@@ -42,7 +42,6 @@ class _BottomNavState extends State<BottomNav> {
         ),
       ),
       child: Scaffold(
-        bottomSheet: const MiniPlayer(),
         backgroundColor: Colors.transparent,
         body: _pages[_currentSelectedIndex],
         bottomNavigationBar: BottomNavigationBar(

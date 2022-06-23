@@ -117,16 +117,7 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
                                       style: TextStyle(color: Colors.white70),
                                     ),
                                     actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text(
-                                          'No',
-                                          style:
-                                              TextStyle(color: Colors.white70),
-                                        ),
-                                      ),
+                                      
                                       TextButton(
                                         onPressed: () {
                                           setState(() {
@@ -136,6 +127,16 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
                                         },
                                         child: const Text(
                                           'Yes',
+                                          style:
+                                              TextStyle(color: Colors.white70),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          'No',
                                           style:
                                               TextStyle(color: Colors.white70),
                                         ),
@@ -297,12 +298,4 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
     );
   }
 
-  update() async {
-    return await plBox.add(
-      PlSongs(
-        playlistName: controller.text,
-        playlistSongs: [],
-      ),
-    );
-  }
 }

@@ -37,14 +37,13 @@ class _FavoriteIconState extends State<FavoriteIcon> {
 
     favoriteSongs = favBox.values.toList();
 
-
     return favoriteSongs
             .where((element) =>
                 element.id.toString() ==
                 widget.allSongs[widget.index].id.toString())
             .isEmpty
         ? IconButton(
-            onPressed: ()  {
+            onPressed: () {
               favBox.add(
                 FavSongs(
                   songname: widget.allSongs[widget.index].songname,
@@ -56,23 +55,26 @@ class _FavoriteIconState extends State<FavoriteIcon> {
               );
               setState(() {});
 
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(widget.allSongs[widget.index].songname! +
-                        'Added to favourites')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: const Color.fromARGB(255, 151, 21, 67),
+                  content: Text(widget.allSongs[widget.index].songname! +
+                      'Added to favourites')));
             },
             icon: const Icon(
               Icons.favorite,
               color: Colors.white70,
             ))
         : IconButton(
-            onPressed: () {
+            onPressed: () async {
               int currentIndex = favoriteSongs.indexWhere(
                   (element) => element.id == widget.allSongs[widget.index].id);
-
-              favBox.deleteAt(currentIndex);
+              
+              await favBox.deleteAt(currentIndex);
+              
 
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
+                  backgroundColor: Color.fromARGB(255, 151, 21, 67),
                   content: Text('Removed from favourites'),
                 ),
               );
@@ -86,5 +88,3 @@ class _FavoriteIconState extends State<FavoriteIcon> {
           );
   }
 }
-
-

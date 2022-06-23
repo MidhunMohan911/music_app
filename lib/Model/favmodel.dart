@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 part 'favmodel.g.dart';
 
 @HiveType(typeId: 1)
-class FavSongs {
+class FavSongs extends HiveObject {
   @HiveField(0)
   String? songname;
 

@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:music_app/Favourites/fav_add.dart';
+import '../Play Music/Mini Player/mini_player.dart';
 import 'package:music_app/Model/favmodel.dart';
 import 'package:music_app/Model/model.dart';
+import 'package:music_app/Play%20Music/Mini%20Player/mini_player.dart';
+import 'package:music_app/Play%20Music/play_music.dart';
 import 'package:music_app/player/open_player.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -16,10 +19,34 @@ class ScreenFavorites extends StatefulWidget {
   State<ScreenFavorites> createState() => _ScreenFavoritesState();
 }
 
-List<Audio> favSong = [];
+// List<Audio> favSong = [];
 
 class _ScreenFavoritesState extends State<ScreenFavorites> {
-  // final box = SongBox.getInstance();
+  List<Audio> favSong = [];
+  final box = SongBox.getInstance();
+
+  @override
+  void initState() {
+    Box<FavSongs> box = Hive.box<FavSongs>(favboxname);
+
+    List<FavSongs> favSongs = box.values.toList();
+
+    for (var item in favSongs) {
+      favSong.add(
+        Audio.file(
+          item.songurl!,
+          metas: Metas(
+            title: item.songname,
+            artist: item.artist,
+            id: item.id.toString(),
+          ),
+        ),
+      );
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -111,7 +138,7 @@ class _ScreenFavoritesState extends State<ScreenFavorites> {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ListTile(
-                              onTap: () {
+                              onTap: () async {
                                 for (var item in favoriteSongs) {
                                   favSong.add(
                                     Audio.file(
@@ -124,13 +151,26 @@ class _ScreenFavoritesState extends State<ScreenFavorites> {
                                     ),
                                   );
                                 }
+                              
+
                                 OpenPlayer(
                                         fullSongs: favSong,
                                         index: index,
                                         songId:
                                             favSong[index].metas.id.toString())
                                     .openAssetPlayer(
-                                        index: index, songs: favSong);
+                                  index: index,
+                                  songs: favSong,
+                                );
+
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => PlayMusic(
+                                      fullSongs: favSong,
+                                      index: index,
+                                    ),
+                                  ),
+                                );
                               },
                               leading: QueryArtworkWidget(
                                 id: favoriteSongs[index].id!,
@@ -165,7 +205,11 @@ class _ScreenFavoritesState extends State<ScreenFavorites> {
                               trailing: IconButton(
                                 onPressed: () {
                                   favbox.deleteAt(index);
-                                  setState(() {});
+                                  favSong.removeAt(index);
+
+                                  print(favSong.length);
+                                  print(favbox.values.length);
+                                  print('+++++++++++++++++++');
                                 },
                                 icon: const Icon(
                                   Icons.favorite,

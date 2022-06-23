@@ -43,7 +43,7 @@ class _PlayMusicState extends State<PlayMusic> {
   void initState() {
     box = Hive.box<Songs>(boxname);
 
-    // TODO: implement initState
+  
     super.initState();
   }
 
@@ -218,7 +218,7 @@ class _PlayMusicState extends State<PlayMusic> {
                     // ========= Play_button ========= //
                     CircleAvatar(
                       minRadius: 35,
-                      backgroundColor: Color.fromARGB(255, 37, 3, 47),
+                      backgroundColor: const Color.fromARGB(255, 37, 3, 47),
                       foregroundColor: Colors.deepOrange,
                       child: PlayerBuilder.isPlaying(
                           player: player,

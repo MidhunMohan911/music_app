@@ -10,6 +10,9 @@ class OpenPlayer {
   final AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
 
   openAssetPlayer({List<Audio>? songs, required int index}) async {
+
+   
+
     player.open(Playlist(audios: songs, startIndex: index),
         showNotification: notify == null || notify == true ? true : false,
         notificationSettings: const NotificationSettings(

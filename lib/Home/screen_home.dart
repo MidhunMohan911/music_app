@@ -6,6 +6,7 @@ import 'package:music_app/Home/Drawer/settings.dart';
 import 'package:music_app/Home/Search/search_location.dart';
 import 'package:music_app/Model/model.dart';
 import 'package:music_app/Model/plmodel.dart';
+import 'package:music_app/Play%20Music/Mini%20Player/mini_player.dart';
 import 'package:music_app/Playlists/createplaylist.dart';
 import 'package:music_app/player/open_player.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -42,7 +43,7 @@ class _ScreenHomeState extends State<ScreenHome> {
 
   @override
   Widget build(BuildContext context) {
-  // List<Songs> songs = box.values.toList();
+    // List<Songs> songs = box.values.toList();
 
     return Container(
       decoration: const BoxDecoration(
@@ -59,6 +60,7 @@ class _ScreenHomeState extends State<ScreenHome> {
         ),
       ),
       child: Scaffold(
+          bottomSheet: const MiniPlayer(),
           drawer: const SettingsDrawer(),
           backgroundColor: Colors.transparent,
           appBar: AppBar(
@@ -78,16 +80,10 @@ class _ScreenHomeState extends State<ScreenHome> {
             title: const Text(
               'Noisy Dose',
               style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.w500,
-                fontStyle: FontStyle.italic,
-                shadows: [
-                  Shadow(
-                    color: Colors.red,
-                    blurRadius: 15
-                  )
-                ]
-              ),
+                  fontSize: 32,
+                  fontWeight: FontWeight.w500,
+                  fontStyle: FontStyle.italic,
+                  shadows: [Shadow(color: Colors.red, blurRadius: 15)]),
             ),
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
@@ -208,7 +204,6 @@ class _ScreenHomeState extends State<ScreenHome> {
 }
 
 class PlButtonHome extends StatelessWidget {
-  
   PlButtonHome({
     Key? key,
     required this.songIndex,
@@ -218,7 +213,7 @@ class PlButtonHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-        final height = MediaQuery.of(context).size.height;
+    final height = MediaQuery.of(context).size.height;
 
     return IconButton(
       onPressed: () {
@@ -262,12 +257,10 @@ class PlButtonHome extends StatelessWidget {
                                                 CreatePlaylist());
                                       },
                                     ),
-                                     Center(
-                                      child: 
-                                      Column(
-                                        
+                                    Center(
+                                      child: Column(
                                         children: [
-                                          SizedBox(height: height*.2),
+                                          SizedBox(height: height * .2),
                                           // Lottie.network('https://assets2.lottiefiles.com/packages/lf20_mmwivxcd.json',
                                           // width: 30,
                                           // height: 30,
@@ -275,9 +268,7 @@ class PlButtonHome extends StatelessWidget {
                                           Text('No playlists')
                                         ],
                                       ),
-                                      
                                     ),
-                                     
                                   ],
                                 );
                               }
@@ -398,6 +389,13 @@ class PlButtonHome extends StatelessWidget {
                                                       ScaffoldMessenger.of(
                                                               context)
                                                           .showSnackBar(SnackBar(
+                                                              backgroundColor: const
+                                                                  Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          151,
+                                                                          21,
+                                                                          67),
                                                               content: Text(dbAllSongs[
                                                                           songIndex]
                                                                       .songname! +
@@ -409,6 +407,13 @@ class PlButtonHome extends StatelessWidget {
                                                       ScaffoldMessenger.of(
                                                               context)
                                                           .showSnackBar(SnackBar(
+                                                              backgroundColor: const
+                                                                  Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          151,
+                                                                          21,
+                                                                          67),
                                                               content: Text(dbAllSongs[
                                                                           songIndex]
                                                                       .songname! +
