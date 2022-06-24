@@ -19,7 +19,7 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
   late Box<PlSongs> plBox;
   final formkey = GlobalKey<FormState>();
 
-  TextEditingController controller = TextEditingController();
+
 
   @override
   void initState() {
@@ -101,7 +101,7 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
             return ListView.builder(
               itemCount: playlists.length,
               itemBuilder: (context, index) {
-                controller.text = playlists[index].playlistName!;
+                 TextEditingController controller = TextEditingController(text: playlists[index].playlistName);
                 return Slidable(
                   endActionPane:
                       ActionPane(motion: const StretchMotion(), children: [

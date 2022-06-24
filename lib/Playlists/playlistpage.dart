@@ -31,7 +31,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   // List<PlSongs> plSongs = [];
   late Box<PlSongs> plBox;
   late Box<Songs> box;
-
+  bool isAdded = false;
   @override
   void initState() {
     // plBox = Hive.box<PlSongs>(plboxname);
@@ -222,8 +222,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                                     ScaffoldMessenger.of(
                                                             context)
                                                         .showSnackBar(SnackBar(
-                                                          backgroundColor: const Color.fromARGB(255, 151, 21, 67),
-                                                          
+                                                            backgroundColor:
+                                                                const Color
+                                                                        .fromARGB(
+                                                                    255,
+                                                                    151,
+                                                                    21,
+                                                                    67),
                                                             content: Text(allSongsss[
                                                                         index]
                                                                     .songname! +
@@ -235,7 +240,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                                     ScaffoldMessenger.of(
                                                             context)
                                                         .showSnackBar(SnackBar(
-                                                          backgroundColor: const Color.fromARGB(255, 151, 21, 67),
+                                                            backgroundColor:
+                                                                const Color
+                                                                        .fromARGB(
+                                                                    255,
+                                                                    151,
+                                                                    21,
+                                                                    67),
                                                             content: Text(allSongsss[
                                                                         index]
                                                                     .songname! +
@@ -296,9 +307,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                           widget.allSongs.removeAt(index);
                                           plstSongs.removeAt(index);
 
-                                          print(widget.allSongs.length);
-                                          print(plstSongs.length);
-
+                                       
                                           box.putAt(
                                             widget.index,
                                             PlSongs(
@@ -331,10 +340,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                                     ),
                                   );
                                 }
-                                print(
-                                    '+++++++++++++++++++++++++++++++++++++++++');
-                                print(widget.allSongs.length);
-                                print(plstSongs.length);
+                               
 
                                 await player.open(
                                   Playlist(
@@ -389,116 +395,4 @@ class _PlaylistPageState extends State<PlaylistPage> {
 }
 
 
-// class PlaylistSongsAdd extends StatefulWidget {
-//   PlaylistSongsAdd({Key? key, required this.songIndex}) : super(key: key);
-//   int songIndex;
-//   @override
-//   State<PlaylistSongsAdd> createState() => _PlaylistSongsAddState();
-// }
 
-// class _PlaylistSongsAddState extends State<PlaylistSongsAdd> {
-//   List<Songs> dbSongs = [];
-//   late Box<Songs> alldbSongs;
-//   // List<PlSongs> plSongs = [];
-//   // late Box<PlSongs> plBox;
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     alldbSongs = Hive.box<Songs>(boxname);
-//     // plBox = Hive.box<PlSongs>(plboxname);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     List<Songs> allSongsss = alldbSongs.values.toList();
-//     // List<PlSongs> plSongs = plBox.values.toList();
-
-//     return ListView.builder(
-//       itemCount: allSongsss.length,
-//       itemBuilder: (context, index) {
-//         return ListTile(
-//             leading: QueryArtworkWidget(
-//                 artworkBorder: BorderRadius.circular(20),
-//                 artworkFit: BoxFit.cover,
-//                 nullArtworkWidget: ClipRRect(
-//                   borderRadius: const BorderRadius.all(Radius.circular(20)),
-//                   child: Image.asset(
-//                     'assets/tumblr_o1h4njg3ku1sgjgnbo1_500-3396.jpeg',
-//                     fit: BoxFit.cover,
-//                   ),
-//                 ),
-//                 id: allSongsss[index].id!,
-//                 type: ArtworkType.AUDIO),
-//             title: Padding(
-//               padding: const EdgeInsets.only(top: 3, left: 5, bottom: 3),
-//               child: Text(
-//                 allSongsss[index].songname!,
-//                 overflow: TextOverflow.ellipsis,
-//               ),
-//             ),
-//             subtitle: Padding(
-//               padding: const EdgeInsets.only(left: 8.0),
-//               child: Text(
-//                 allSongsss[index].artist!,
-//               ),
-//             ),
-//             trailing: ValueListenableBuilder<Box<PlSongs>>(
-//                 valueListenable: Hive.box<PlSongs>(plboxname).listenable(),
-//                 builder: (ctx, playlistBox, _) {
-//                   List<PlSongs> playlists = playlistBox.values.toList();
-//                   return IconButton(
-//                       onPressed: () {
-//                         PlSongs? plsongs = playlistBox.getAt(widget.songIndex);
-
-//                         List<Songs>? plnewSongs = plsongs!.playlistSongs;
-
-//                         // Box<Songs> box =
-//                         //     Hive.box<Songs>(
-//                         //         boxname);
-
-//                         // List<Songs> dbAllSongs =
-//                         //     box.values.toList();
-
-//                         bool isAlreadyAdded = plnewSongs!.any(
-//                             (element) => element.id == allSongsss[index].id);
-
-//                         if (!isAlreadyAdded) {
-//                           plnewSongs.add(
-//                             Songs(
-//                               songname: allSongsss[index].songname,
-//                               artist: allSongsss[index].artist,
-//                               duration: allSongsss[index].duration,
-//                               songurl: allSongsss[index].songurl,
-//                               id: allSongsss[index].id,
-//                             ),
-//                           );
-
-//                           playlistBox.putAt(
-//                             widget.songIndex,
-//                             PlSongs(
-//                                 playlistName:
-//                                     playlists[widget.songIndex].playlistName,
-//                                 playlistSongs: plnewSongs),
-//                           );
-
-//                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//                               content: Text(allSongsss[index].songname! +
-//                                   'Added to ' +
-//                                   playlists[widget.songIndex].playlistName!)));
-//                         } else {
-//                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//                               content: Text(allSongsss[index].songname! +
-//                                   ' is already added')));
-//                         }
-
-//                         Navigator.pop(ctx);
-//                         setState(() {});
-//                       },
-//                       icon: const Icon(Icons.add));
-//                 }));
-//       },
-//     );
-//   }
-// }
