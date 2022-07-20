@@ -1,35 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:music_app/Controller/controller.dart';
 import 'package:music_app/Model/plmodel.dart';
 import 'package:music_app/Playlists/createplaylist.dart';
 import 'package:music_app/Playlists/playlistpage.dart';
 
-class ScreenPlaylist extends StatefulWidget {
-  const ScreenPlaylist({Key? key}) : super(key: key);
+class ScreenPlaylist extends StatelessWidget {
+  ScreenPlaylist({Key? key}) : super(key: key);
 
-  @override
-  State<ScreenPlaylist> createState() => _ScreenPlaylistState();
-}
-
-class _ScreenPlaylistState extends State<ScreenPlaylist> {
   List<PlSongs> plSongs = [];
-  late Box<PlSongs> plBox;
+  // late Box<PlSongs> plBox;
   final formkey = GlobalKey<FormState>();
 
-
-
-  @override
-  void initState() {
-    super.initState();
-    plBox = Hive.box<PlSongs>(plboxname);
-  }
+  final playlistBox = Hive.box<PlSongs>(plboxname);
 
   @override
   Widget build(BuildContext context) {
-    // controller.text="sjmsl";
     final height = MediaQuery.of(context).size.height;
 
     return Container(
@@ -49,18 +39,18 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const  Text('Playlists',
-
+          title: const Text(
+            'Playlists',
             style: TextStyle(
-               fontWeight: FontWeight.w400,
-               fontStyle: FontStyle.italic,
-              shadows: [
-                Shadow(
-                  blurRadius: 14,
-                  color: Colors.red,
-                )
-              ]
-            ),),
+                fontWeight: FontWeight.w400,
+                fontStyle: FontStyle.italic,
+                shadows: [
+                  Shadow(
+                    blurRadius: 14,
+                    color: Colors.red,
+                  )
+                ]),
+          ),
           centerTitle: true,
           // toolbarHeight: 90,
           elevation: 0,
@@ -73,25 +63,19 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
             showDialog(
                 context: context,
                 builder: (context) {
-                  return const CreatePlaylist();
+                  return CreatePlaylist();
                 });
           },
         ),
-        body: ValueListenableBuilder<Box<PlSongs>>(
-          valueListenable: Hive.box<PlSongs>(plboxname).listenable(),
-          builder: (BuildContext context, Box<PlSongs> playlistBox, _) {
+        body: GetBuilder<Controller>(
+          init: Controller(),
+          builder: (controller) {
             List<PlSongs> playlists = playlistBox.values.toList();
-
             if (playlistBox.isEmpty) {
               return Center(
                 child: Column(
                   children: [
                     SizedBox(height: height * .35),
-                    // Lottie.network(
-                    //   'https://assets2.lottiefiles.com/packages/lf20_mmwivxcd.json',
-                    //   width: 30,
-                    //   height: 30,
-                    // ),
                     const Text('No playlists')
                   ],
                 ),
@@ -101,49 +85,43 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
             return ListView.builder(
               itemCount: playlists.length,
               itemBuilder: (context, index) {
-                 TextEditingController controller = TextEditingController(text: playlists[index].playlistName);
+                TextEditingController textController =
+                    TextEditingController(text: playlists[index].playlistName);
                 return Slidable(
                   endActionPane:
                       ActionPane(motion: const StretchMotion(), children: [
                     SlidableAction(
                       onPressed: (context) {
-                        setState(() {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    backgroundColor: Colors.black,
-                                    content: const Text(
-                                      'Do you Really want to delete ?',
-                                      style: TextStyle(color: Colors.white70),
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  backgroundColor: Colors.black,
+                                  content: const Text(
+                                    'Do you Really want to delete ?',
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        controller.deletePlaylist(index);
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        'Yes',
+                                        style: TextStyle(color: Colors.white70),
+                                      ),
                                     ),
-                                    actions: [
-                                      
-                                      TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            playlistBox.deleteAt(index);
-                                          });
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text(
-                                          'Yes',
-                                          style:
-                                              TextStyle(color: Colors.white70),
-                                        ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        'No',
+                                        style: TextStyle(color: Colors.white70),
                                       ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text(
-                                          'No',
-                                          style:
-                                              TextStyle(color: Colors.white70),
-                                        ),
-                                      ),
-                                    ],
-                                  ));
-                        });
+                                    ),
+                                  ],
+                                ));
                       },
                       backgroundColor: const Color.fromARGB(255, 93, 18, 13),
                       foregroundColor: Colors.white,
@@ -155,90 +133,74 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
                     ),
                     SlidableAction(
                       onPressed: (context) {
-                        setState(() {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              backgroundColor: Colors.black26,
-                              title: const Text(
-                                'Edit your playlist name',
-                                style: TextStyle(color: Colors.white70),
-                              ),
-                              content: Form(
-                                  key: formkey,
-                                  child: TextFormField(
-                                    // initialValue: playlists[index].playlistName,
-                                    controller: controller,
-                                    style: const TextStyle(color: Colors.black),
-                                    decoration: const InputDecoration(
-                                        hintText: 'Enter a playlistName',
-                                        fillColor: Colors.white70,
-                                        filled: true),
-                                    validator: (value) {
-                                      List<PlSongs> values =
-                                          plBox.values.toList();
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: Colors.black26,
+                            title: const Text(
+                              'Edit your playlist name',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                            content: Form(
+                                key: formkey,
+                                child: TextFormField(
+                                  controller: textController,
+                                  style: const TextStyle(color: Colors.black),
+                                  decoration: const InputDecoration(
+                                      hintText: 'Enter a playlistName',
+                                      fillColor: Colors.white70,
+                                      filled: true),
+                                  validator: (value) {
+                                    List<PlSongs> values =
+                                        playlistBox.values.toList();
 
-                                      // bool isAlreadyused = values
-                                      //     .where((element) =>
-                                      //         element.playlistName ==
-                                      //         value!.trim())
-                                      //     .isNotEmpty;
+                                    if (value!.trim() == '') {
+                                      return 'Name required';
+                                    }
 
-                                      if (value!.trim() == '') {
-                                        return 'Name required';
-                                      }
-                                      // if (isAlreadyused) {
-                                      //   return 'This Name Already Exist';
-                                      // }
-                                      return null;
+                                    return null;
+                                  },
+                                )),
+                            actions: [
+                              Row(
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
                                     },
-                                  )),
-                              actions: [
-                                Row(
-                                  children: [
-                                    TextButton(
+                                    child: const Text(
+                                      'cancel',
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  TextButton(
                                       onPressed: () {
-                                        Navigator.pop(context);
+                                        PlSongs? playlistDetails =
+                                            playlistBox.getAt(index);
+
+                                        if (formkey.currentState!.validate()) {
+                                          controller.editPlaylist(
+                                            index,
+                                            PlSongs(
+                                              playlistName: textController.text,
+                                              playlistSongs: playlistDetails!
+                                                  .playlistSongs,
+                                            ),
+                                          );
+
+                                          Navigator.pop(context);
+                                        }
                                       },
                                       child: const Text(
-                                        'cancel',
+                                        'save',
                                         style: TextStyle(color: Colors.white70),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    TextButton(
-                                        onPressed: () {
-                                          if (formkey.currentState!
-                                              .validate()) {
-                                            plBox.putAt(
-                                                index,
-                                                PlSongs(
-                                                    playlistName:
-                                                        controller.text,
-                                                    playlistSongs: []));
-
-                                            // plBox.add(
-                                            //   PlSongs(
-                                            //     playlistName: controller.text,
-                                            //     playlistSongs: [],
-                                            //   ),
-                                            // );
-
-                                            Navigator.pop(context);
-                                            // setState(() {});
-                                          }
-                                        },
-                                        child: const Text(
-                                          'save',
-                                          style:
-                                              TextStyle(color: Colors.white70),
-                                        ))
-                                  ],
-                                )
-                              ],
-                            ),
-                          );
-                        });
+                                      ))
+                                ],
+                              )
+                            ],
+                          ),
+                        );
                       },
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
@@ -281,7 +243,7 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
                               builder: (context) => PlaylistPage(
                                 playlistName: playlists[index].playlistName!,
                                 allSongs: playlists[index].playlistSongs!,
-                                index: index,
+                                indexx: index,
                               ),
                             ));
                           },
@@ -297,5 +259,4 @@ class _ScreenPlaylistState extends State<ScreenPlaylist> {
       ),
     );
   }
-
 }

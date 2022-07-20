@@ -68,22 +68,22 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                       'https://github.com/MidhunMohan911/music_app.git');
                 },
               ),
-              ListTile(
-                leading: const Icon(
-                  Icons.notifications_active_outlined,
-                ),
-                title: const Text(
-                  'Notification',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w400),
-                ),
-                trailing: SwitcherButton(
-                  value: true,
-                  size: 27,
-                  onChange: (value) {},
-                ),
-                onTap: () {},
-              ),
+              // ListTile(
+              //   leading: const Icon(
+              //     Icons.notifications_active_outlined,
+              //   ),
+              //   title: const Text(
+              //     'Notification',
+              //     style: TextStyle(
+              //         color: Colors.white, fontWeight: FontWeight.w400),
+              //   ),
+              //   trailing: SwitcherButton(
+              //     value: true,
+              //     size: 27,
+              //     onChange: (value) {},
+              //   ),
+              //   onTap: () {},
+              // ),
               ListTile(
                 leading: const Icon(Icons.privacy_tip_outlined),
                 title: const Text(
@@ -146,7 +146,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                     height: 5,
                   ),
                   Text(
-                    '2.7.5',
+                    '1.0.0',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 10,

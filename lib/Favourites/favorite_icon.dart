@@ -1,90 +1,120 @@
 import 'package:flutter/material.dart';
+import 'package:get/state_manager.dart';
 import 'package:hive/hive.dart';
+import 'package:music_app/Controller/controller.dart';
 import 'package:music_app/Model/favmodel.dart';
 import 'package:music_app/Model/model.dart';
 
-class FavoriteIcon extends StatefulWidget {
+class FavoriteIcon extends StatelessWidget {
   List<Songs> allSongs;
   final int index;
-  // final String songId;
   FavoriteIcon({
     Key? key,
-    // required this.songId,
     required this.allSongs,
     required this.index,
   }) : super(key: key);
 
-  @override
-  State<FavoriteIcon> createState() => _FavoriteIconState();
-}
-
-class _FavoriteIconState extends State<FavoriteIcon> {
-  // final box = SongBox.getInstance();
-  // List<Audio> fullSongs = [];
   List<FavSongs> favoriteSongs = [];
   late Box<FavSongs> favBox;
 
   @override
-  void initState() {
+  Widget build(BuildContext context) {
     favBox = Hive.box<FavSongs>(favboxname);
 
-    super.initState();
-  }
+    return GetBuilder<Controller>(builder: (controller) {
+      favoriteSongs = favBox.values.toList();
 
-  @override
-  Widget build(BuildContext context) {
-    // final fav = databaseSongs(dbSongs, widget.songId);
+      bool isNotAdded = favoriteSongs
+          .where((element) =>
+              element.id.toString() == allSongs[index].id.toString())
+          .isEmpty;
 
-    favoriteSongs = favBox.values.toList();
+      return isNotAdded
+          ? IconButton(
+              onPressed: () {
+                FavSongs favSong = FavSongs(
+                  songname: allSongs[index].songname,
+                  artist: allSongs[index].artist,
+                  duration: allSongs[index].duration,
+                  songurl: allSongs[index].songurl,
+                  id: allSongs[index].id,
+                );
 
-    return favoriteSongs
-            .where((element) =>
-                element.id.toString() ==
-                widget.allSongs[widget.index].id.toString())
-            .isEmpty
-        ? IconButton(
-            onPressed: () {
-              favBox.add(
-                FavSongs(
-                  songname: widget.allSongs[widget.index].songname,
-                  artist: widget.allSongs[widget.index].artist,
-                  duration: widget.allSongs[widget.index].duration,
-                  songurl: widget.allSongs[widget.index].songurl,
-                  id: widget.allSongs[widget.index].id,
-                ),
-              );
-              setState(() {});
+                controller.addFavSongs(favSong);
 
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: const Color.fromARGB(255, 151, 21, 67),
-                  content: Text(widget.allSongs[widget.index].songname! +
-                      'Added to favourites')));
-            },
-            icon: const Icon(
-              Icons.favorite,
-              color: Colors.white70,
-            ))
-        : IconButton(
-            onPressed: () async {
-              int currentIndex = favoriteSongs.indexWhere(
-                  (element) => element.id == widget.allSongs[widget.index].id);
-              
-              await favBox.deleteAt(currentIndex);
-              
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: const Color.fromARGB(255, 151, 21, 67),
+                    content: Text(
+                        allSongs[index].songname! + 'Added to favourites')));
+              },
+              icon: const Icon(
+                Icons.favorite,
+                color: Colors.white70,
+              ))
+          : IconButton(
+              onPressed: () async {
+                int currentIndex = favoriteSongs
+                    .indexWhere((element) => element.id == allSongs[index].id);
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: Color.fromARGB(255, 151, 21, 67),
-                  content: Text('Removed from favourites'),
-                ),
-              );
+                controller.deleteFavSongs(currentIndex);
 
-              setState(() {});
-            },
-            icon: const Icon(
-              Icons.favorite,
-              color: Colors.red,
-            ),
-          );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Color.fromARGB(255, 151, 21, 67),
+                    content: Text('Removed from favourites'),
+                  ),
+                );
+              },
+              icon: const Icon(
+                Icons.favorite,
+                color: Colors.red,
+              ),
+            );
+    });
+
+    // favoriteSongs
+    //         .where((element) =>
+    //             element.id.toString() == allSongs[index].id.toString())
+    //         .isEmpty
+    //     ? IconButton(
+    //         onPressed: () {
+    //           favBox.add(
+    //             FavSongs(
+    //               songname: allSongs[index].songname,
+    //               artist: allSongs[index].artist,
+    //               duration: allSongs[index].duration,
+    //               songurl: allSongs[index].songurl,
+    //               id: allSongs[index].id,
+    //             ),
+    //           );
+
+    //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //               backgroundColor: const Color.fromARGB(255, 151, 21, 67),
+    //               content:
+    //                   Text(allSongs[index].songname! + 'Added to favourites')));
+    //         },
+    //         icon: const Icon(
+    //           Icons.favorite,
+    //           color: Colors.white70,
+    //         ))
+    //     : IconButton(
+    //         onPressed: () async {
+    //           int currentIndex = favoriteSongs
+    //               .indexWhere((element) => element.id == allSongs[index].id);
+
+    //           await favBox.deleteAt(currentIndex);
+
+    //           ScaffoldMessenger.of(context).showSnackBar(
+    //             const SnackBar(
+    //               backgroundColor: Color.fromARGB(255, 151, 21, 67),
+    //               content: Text('Removed from favourites'),
+    //             ),
+    //           );
+    //         },
+    //         icon: const Icon(
+    //           Icons.favorite,
+    //           color: Colors.red,
+    //         ),
+    //       );
   }
 }

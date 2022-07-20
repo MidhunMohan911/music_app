@@ -21,9 +21,9 @@ class _BottomNavState extends State<BottomNav> {
   int _currentSelectedIndex = 0;
 
   final List<Widget> _pages = <Widget>[
-    const ScreenHome(),
-    const ScreenFavorites(),
-    const ScreenPlaylist(),
+     ScreenHome(),
+     ScreenFavorites(),
+     ScreenPlaylist(),
   ];
 
   @override
@@ -43,7 +43,12 @@ class _BottomNavState extends State<BottomNav> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: _pages[_currentSelectedIndex],
+        body: Column(
+          children: [
+            Expanded(child: _pages[_currentSelectedIndex]),
+            MiniPlayer(),
+          ],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentSelectedIndex,
           onTap: (newIndex) {

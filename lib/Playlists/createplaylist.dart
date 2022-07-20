@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:music_app/Controller/controller.dart';
 import 'package:music_app/Model/model.dart';
 import 'package:music_app/Model/plmodel.dart';
 
-class CreatePlaylist extends StatefulWidget {
-  const CreatePlaylist({Key? key}) : super(key: key);
+class CreatePlaylist extends StatelessWidget {
+  CreatePlaylist({Key? key}) : super(key: key);
 
-  @override
-  State<CreatePlaylist> createState() => _CreatePlaylistState();
-}
-
-class _CreatePlaylistState extends State<CreatePlaylist> {
   List<PlSongs> playlists = [];
   late Box<PlSongs> plBox;
   final formkey = GlobalKey<FormState>();
@@ -18,13 +15,8 @@ class _CreatePlaylistState extends State<CreatePlaylist> {
   TextEditingController controller = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    plBox = Hive.box<PlSongs>(plboxname);
-  }
-
-  @override
   Widget build(BuildContext context) {
+    plBox = Hive.box<PlSongs>(plboxname);
     return AlertDialog(
       backgroundColor: Colors.black,
       title: const Text(
@@ -69,24 +61,33 @@ class _CreatePlaylistState extends State<CreatePlaylist> {
               ),
             ),
             const Spacer(),
-            TextButton(
-                onPressed: () {
-                  if (formkey.currentState!.validate()) {
-                    plBox.add(
-                      PlSongs(
-                        playlistName: controller.text,
-                        playlistSongs: [],
-                      ),
-                    );
+            GetBuilder<Controller>(
+                init: Controller(),
+                builder: (getcontrlr) {
+                  return TextButton(
+                      onPressed: () {
+                        if (formkey.currentState!.validate()) {
+                          // getcontrlr.addPlaylist()
+                          Navigator.pop(context);
+                          getcontrlr.createPlaylist(PlSongs(
+                            playlistName: controller.text,
+                            playlistSongs: [],
+                          ));
 
-                    Navigator.pop(context);
-                    // setState(() {});
-                  }
-                },
-                child: const Text(
-                  'save',
-                  style: TextStyle(color: Colors.white70),
-                ))
+                          // plBox.add(
+                          //   PlSongs(
+                          //     playlistName: controller.text,
+                          //     playlistSongs: [],
+                          //   ),
+                          // );
+
+                        }
+                      },
+                      child: const Text(
+                        'save',
+                        style: TextStyle(color: Colors.white70),
+                      ));
+                })
           ],
         )
       ],

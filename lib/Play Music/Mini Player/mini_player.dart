@@ -2,30 +2,26 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
+import 'package:music_app/Controller/splash_controller.dart';
 import 'package:music_app/Play%20Music/play_music.dart';
 import 'package:music_app/Splash%20Screen/splash_screen.dart';
 import 'package:music_app/bottomnav.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class MiniPlayer extends StatefulWidget {
-  const MiniPlayer({Key? key}) : super(key: key);
+class MiniPlayer extends StatelessWidget {
+   MiniPlayer({Key? key}) : super(key: key);
 
-  @override
-  State<MiniPlayer> createState() => _MiniPlayerState();
-}
+ 
 
 final AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
 
-// Audio find(List<Audio> source, String fromPath) {
-//   return source.firstWhere((element) => element.path == fromPath);
-// }
 
-class _MiniPlayerState extends State<MiniPlayer> {
+
+
   @override
   Widget build(BuildContext context) {
     return player.builderCurrent(
         builder: (BuildContext context, Playing? playing) {
-      // final myAudio = find(fullSongs, playing!.audio.assetAudioPath);
 
       int songId = int.parse(playing!.audio.audio.metas.id!);
 
@@ -46,10 +42,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
             ),
             child: player.builderCurrent(
               builder: ((context, Playing? playing) {
-                // final myAudio =
-                //     find(fullSongs, playing!.audio.assetAudioPath);
-                // final currentSong = dbSongs.firstWhere((element) =>
-                //     element.id.toString() == myAudio.metas.id.toString());
+               
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: ListTile(

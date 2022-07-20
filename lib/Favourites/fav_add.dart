@@ -4,30 +4,18 @@ import 'package:music_app/Favourites/favorite_icon.dart';
 import 'package:music_app/Model/model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class FavoriteAdd extends StatefulWidget {
-  const FavoriteAdd({Key? key}) : super(key: key);
+class FavoriteAdd extends StatelessWidget {
+   FavoriteAdd({Key? key}) : super(key: key);
 
-  @override
-  State<FavoriteAdd> createState() => _FavoriteAddState();
-}
 
-class _FavoriteAddState extends State<FavoriteAdd> {
    List<Songs> dbSongs = [];
   late Box<Songs> allsongbox;
-  // late Box<FavSongs> favsongbox;
 
-  @override
-  void initState() {
-    super.initState();
-
-    allsongbox = Hive.box<Songs>(boxname);
-    // favsongbox = Hive.box<FavSongs>(favboxname);
-
-    // dbSongs = box.values.toList();
-  }
-
+ 
   @override
   Widget build(BuildContext context) {
+  allsongbox = Hive.box<Songs>(boxname);
+
     List<Songs> allsongs = allsongbox.values.toList();
 
     return ListView.builder(

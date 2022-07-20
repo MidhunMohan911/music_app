@@ -3,8 +3,10 @@ import 'package:favorite_button/favorite_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:marquee/marquee.dart';
+import 'package:music_app/Controller/controller.dart';
 import 'package:music_app/Favourites/favorite_icon.dart';
 import 'package:music_app/Home/screen_home.dart';
 import 'package:music_app/Splash%20Screen/splash_screen.dart';
@@ -13,7 +15,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:music_app/Model/model.dart';
 
 // ignore: must_be_immutable
-class PlayMusic extends StatefulWidget {
+class PlayMusic extends StatelessWidget {
   int index;
   List<Audio> fullSongs = [];
   PlayMusic({
@@ -22,36 +24,17 @@ class PlayMusic extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  @override
-  State<PlayMusic> createState() => _PlayMusicState();
-}
-
-AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
-bool isRepeat = false;
-
-// Audio find(List<Audio> source, String fromPath) {
-//   return source.firstWhere((element) => element.path == fromPath);
-// }
-
-class _PlayMusicState extends State<PlayMusic> {
-  final AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
+  AssetsAudioPlayer player = AssetsAudioPlayer.withId('0');
+  bool isRepeat = false;
 
   late Box<Songs> box;
   late List<Songs> allsongs;
 
   @override
-  void initState() {
-    box = Hive.box<Songs>(boxname);
-
-  
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    box = Hive.box<Songs>(boxname);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    // dbSongs = box.get('musics') as List<Songs>;
 
     allsongs = box.values.toList();
 
@@ -78,12 +61,6 @@ class _PlayMusicState extends State<PlayMusic> {
           backgroundColor: Colors.transparent,
         ),
         body: player.builderCurrent(builder: (context, Playing? playing) {
-          // final myAudio = find(fullSongs, playing!.audio.assetAudioPath);
-          // ignore: unused_local_variable
-
-          // dbSongs.firstWhere((element) =>
-          //     element.id.toString() == myAudio.metas.id.toString());
-
           int songId = int.parse(playing!.audio.audio.metas.id!);
 
           return Center(
@@ -114,9 +91,6 @@ class _PlayMusicState extends State<PlayMusic> {
                 ),
 
                 // ========Title_&_Artist======== //
-                // SizedBox(
-                //   height: MediaQuery.of(context).size.height * 0.10,
-                // ),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 60),
@@ -148,20 +122,18 @@ class _PlayMusicState extends State<PlayMusic> {
                     ],
                   ),
                 ),
-                // SizedBox(
-                //   height: MediaQuery.of(context).size.height * 0.02,
-                // ),
+
                 // ======== fav & playlist ======== //
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                    FavoriteIcon(
+                      FavoriteIcon(
                         allSongs: allsongs,
                         index: playing.index,
                       ),
-                        PlButtonHome(
+                      PlButtonHome(
                         songIndex: playing.index,
                       )
                     ],
@@ -178,21 +150,23 @@ class _PlayMusicState extends State<PlayMusic> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    
-                    // const Spacer(),
                     // ====== Shuffle ====== //
-                    IconButton(
-                        onPressed: () {
-                          player.toggleShuffle();
-                          setState(() {});
-                        },
-                        icon: player.isShuffling.value ? const Icon(Icons.shuffle_on_outlined,
-                            color: 
-                                 
-                                 Colors.white)
-                                 : const Icon(Icons.shuffle,
-                                 color: Colors.white,)
-                                 ),
+                    GetBuilder<Controller>(
+                        init: Controller(),
+                        builder: (controller) {
+                          return IconButton(
+                              onPressed: () {
+                                player.toggleShuffle();
+                                controller.update();
+                              },
+                              icon: player.isShuffling.value
+                                  ? const Icon(Icons.shuffle_on_outlined,
+                                      color: Colors.white)
+                                  : const Icon(
+                                      Icons.shuffle,
+                                      color: Colors.white,
+                                    ));
+                        }),
 
                     // ====== Previous_button ====== //
                     IconButton(
@@ -255,27 +229,29 @@ class _PlayMusicState extends State<PlayMusic> {
                             ),
                     ),
                     // ======== Repeat mode ======= //
-                    IconButton(
-                        onPressed: () {
-                          if (isRepeat) {
-                            player.setLoopMode(LoopMode.none);
-                            isRepeat = false;
-                          } else {
-                            player.setLoopMode(LoopMode.single);
-                            isRepeat = true;
-                          }
-                          setState(() {
-                            
-                          });
-                        },
-                        icon: isRepeat ? const Icon(
-                          Icons.repeat_one_sharp,
-                          color:  Colors.white 
-                        )
-                        : const Icon(Icons.repeat,
-                        color: Colors.white,)
-                        ),
-                  
+                    GetBuilder<Controller>(
+                        init: Controller(),
+                        builder: (controller) {                                                                                       
+                          return IconButton(
+                              onPressed: () {
+                                if (isRepeat) {
+                                  player.setLoopMode(LoopMode.none);
+                                  isRepeat = false;
+                                  controller.update();
+                                } else {
+                                  player.setLoopMode(LoopMode.single);
+                                  isRepeat = true;
+                                  controller.update();
+                                }
+                              },
+                              icon: isRepeat
+                                  ? const Icon(Icons.repeat_one_sharp,
+                                      color: Colors.white)
+                                  : const Icon(
+                                      Icons.repeat,
+                                      color: Colors.white,
+                                    ));
+                        }),
                   ],
                 ),
               ],

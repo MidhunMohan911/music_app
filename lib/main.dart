@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/route_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:music_app/Model/favmodel.dart';
 import 'package:music_app/Model/model.dart';
@@ -31,12 +32,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(
         primaryColor: Colors.transparent,
       ),
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home:  SplashScreen(),
     );
   }
 }

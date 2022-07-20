@@ -1,8 +1,7 @@
-
-
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:music_app/Controller/splash_controller.dart';
 import 'package:music_app/Home/screen_home.dart';
 import 'package:music_app/Model/model.dart';
 import 'package:music_app/Play%20Music/play_music.dart';
@@ -11,10 +10,6 @@ import 'package:music_app/player/open_player.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class SearchLocation extends SearchDelegate {
-
-  
-
-
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -69,7 +64,7 @@ class SearchLocation extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     List<Audio> convertAudios = [];
 
-     List<Songs> dbSongs = box.values.toList();
+    List<Songs> dbSongs = box.values.toList();
 
     for (var item in dbSongs) {
       convertAudios.add(
@@ -90,11 +85,10 @@ class SearchLocation extends SearchDelegate {
                   ),
             )
             .toList();
-   
 
     return Container(
       decoration: const BoxDecoration(
-       gradient: LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
           stops: [0.1, 0.5, 0.7, 0.9],
@@ -109,9 +103,7 @@ class SearchLocation extends SearchDelegate {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: searchSongItems.isEmpty
-            ?  Center(
-              // child: Lottie.network('https://assets1.lottiefiles.com/packages/lf20_ksrabxwb.json',
-              // animate: true),
+            ? const Center(
                 child: Text(
                   "No Songs Found!",
                   style: TextStyle(color: Color.fromARGB(255, 8, 8, 8)),
@@ -133,7 +125,6 @@ class SearchLocation extends SearchDelegate {
                               await OpenPlayer(
                                 fullSongs: convertAudios,
                                 songId: songid,
-                                    
                                 index: index,
                               ).openAssetPlayer(
                                 index: index,
@@ -141,7 +132,10 @@ class SearchLocation extends SearchDelegate {
                               );
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: ((context) => PlayMusic(fullSongs: fullSongs, index: index,)),
+                                  builder: ((context) => PlayMusic(
+                                        fullSongs: fullSongs,
+                                        index: index,
+                                      )),
                                 ),
                               );
                             }),
@@ -155,8 +149,7 @@ class SearchLocation extends SearchDelegate {
                                   fit: BoxFit.cover,
                                 ),
                               ),
-                              id: int.parse(
-                                  searchSongItems[index].metas.id!),
+                              id: int.parse(searchSongItems[index].metas.id!),
                               type: ArtworkType.AUDIO,
                             ),
                             title: SingleChildScrollView(
@@ -171,7 +164,6 @@ class SearchLocation extends SearchDelegate {
                                 searchSongItems[index].metas.artist!,
                               ),
                             ),
-                            
                           ),
                         )),
                   );
